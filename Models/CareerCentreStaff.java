@@ -20,6 +20,10 @@ public class CareerCentreStaff extends User {
     void approveWithdrawal() { // Should return boolean
 
     }
+
+    void generateReport() { 
+
+    }
     
 }
 
