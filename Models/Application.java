@@ -11,6 +11,10 @@ public class Application {
         this.confirmed = false;
     }
 
+    public Internship getInternship() {
+        return internship;
+    }
+
     public void setStatus(String status) {
 
     }

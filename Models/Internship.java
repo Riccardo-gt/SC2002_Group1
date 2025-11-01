@@ -18,6 +18,10 @@ public class Internship {
 
     }
 
+    public CompanyRepresentative getCompanyRepresentative() {
+        return this.representative;
+    }
+
     public void addApplication(Application application) {
 
     }

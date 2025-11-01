@@ -23,7 +23,7 @@ public class CompanyRepresentative extends User {
 
         
     }
-    void approveApplication() { // Should return boolean
+    void approveApplication(Application application) { // Should return boolean
 
     }
 
