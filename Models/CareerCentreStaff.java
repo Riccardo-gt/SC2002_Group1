@@ -17,8 +17,7 @@ public class CareerCentreStaff extends User {
         
     }
 
-    void approveWithdrawal() { // Should return boolean
-
+    void approveWithdrawal(Application application) { // Should return boolean
     }
 
     void generateReport() { 
