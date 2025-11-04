@@ -18,8 +18,26 @@ public class Internship {
 
     }
 
+    public String getTitle() {
+        return this.title;
+    }
+
+    public String getPreferredMajor() {
+        return this.preferredMajor;
+    }
+
     public CompanyRepresentative getCompanyRepresentative() {
         return this.representative;
+    }
+
+    public List<Application> getApplications() {
+    return applications;
+}
+
+    public void printApplications() {
+        for (Application application : applications) {
+            System.out.println(application);
+        }
     }
 
     public void addApplication(Application application) {

@@ -14,16 +14,28 @@ public class Student extends User {
         applications = new ArrayList<Application>();
     }
 
-    String getMajor() {
+    public String getMajor() {
         return this.major;
     }
 
-    void viewInternshipOpportunities() {
+    public String getName() {
+        return this.name;
+    }
+
+    public Float getCGPA() {
+        return this.cgpa;
+    }
+
+    public int getYearOfStudy() {
+        return this.studyYear;
+    }
+
+    public void viewInternshipOpportunities() {
         InternshipViewer internshipViewer = new InternshipViewer();
         internshipViewer.viewInternships();
     }
 
-    void applyForInternship() {
+    public void applyForInternship() {
         InternshipViewer internshipViewer = new InternshipViewer();
         List<Internship> internships = internshipViewer.getInternships();
         Internship internship = internships.get(new Random().nextInt(internships.size()));
@@ -31,13 +43,13 @@ public class Student extends User {
         internshipViewer.applyForInternship(application, internship);
     }
 
-    void viewAppliedInternships() {
+    public void viewAppliedInternships() {
         for (Application application: applications) { 
             System.out.println(application);
         }
     }
 
-    void accept(Internship internship) {
+    public void accept(Internship internship) {
         Application relevantApplication = null;
         
         for (Application application: applications) { 
@@ -49,7 +61,7 @@ public class Student extends User {
         relevantApplication.confirmAcceptance();
     }
 
-    void widthraw() {
+    public void widthdraw() {
         InternshipViewer internshipViewer = new InternshipViewer();
         Application application = applications.get(new Random().nextInt(applications.size()));
         internshipViewer.requestWithdrawal(this, application);
