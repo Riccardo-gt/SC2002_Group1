@@ -17,6 +17,7 @@ public class CareerCentreStaff extends User {
 
     public String getRole() {
         return role;
+
     }
 
     public boolean authorizeAccount(CompanyRepresentative representative) { // Should return boolean
