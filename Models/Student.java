@@ -19,7 +19,7 @@ public class Student extends User {
     }
 
     public String getName() {
-        return this.name;
+        return super.getName();
     }
 
     public Float getCGPA() {

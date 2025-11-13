@@ -4,8 +4,7 @@ public class CareerCentreStaff extends User {
     private String role;
     private String department;
 
-    public CareerCentreStaff(String userId, String name, String email, String password, String role,
-            String department) {
+    public CareerCentreStaff(String userId, String name, String email, String password, String role, String department) {
         super(userId, name, email, password);
         this.role = role;
         this.department = department;
