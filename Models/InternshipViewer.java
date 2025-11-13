@@ -2,7 +2,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InternshipViewer {
-    List<Internship> internships;
+    private List<Internship> internships;
+    
     public InternshipViewer() {
         internships = new ArrayList<Internship>();
     }
@@ -17,28 +18,40 @@ public class InternshipViewer {
 
     public void viewInternships() {
         for (Internship internship: internships) {
-            System.out.println(internship);
+            internship.displayDetails();
+            System.out.println("---");
         }
     }
     
     public void applyForInternship(Application application, Internship internship) {
-        CompanyRepresentative representative = internship.getCompanyRepresentative();
-        representative.approveApplication(application);
+        if (internship.isAcceptingApplications()) {
+            internship.addApplication(application);
+            System.out.println("Application submitted for: " + internship.getTitle());
+        } else {
+            System.out.println("Cannot apply - internship is not accepting applications");
+        }
     }
 
     public void requestWithdrawal(Student student, Application application) {
-        String major = student.getMajor();
-        CareerCentreStaff approvingStaff = null;
-
-        for (CareerCentreStaff staff: staffList) { // staffList = temp placeholder
-            if (staff.department == majorToDepartment.get(major)) { // majorToDepartment = temp placeholder
-                approvingStaff = staff;
-                break;
-            }
-        }
-
-        approvingStaff.approveWithdrawal(application);
+        application.setStatus(Application.ApplicationStatus.REJECTED);
+        System.out.println("Withdrawal requested for application");
     }
 
+    public List<Internship> getOpenInternships() {
+        List<Internship> openInternships = new ArrayList<>();
+        for (Internship internship : internships) {
+            if (internship.isAcceptingApplications()) {
+                openInternships.add(internship);
+            }
+        }
+        return openInternships;
+    }
 
+    public void displayOpenInternships() {
+        System.out.println("=== OPEN INTERNSHIPS ===");
+        for (Internship internship : getOpenInternships()) {
+            internship.displayDetails();
+            System.out.println("---");
+        }
+    }
 }
