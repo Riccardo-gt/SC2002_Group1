@@ -1,4 +1,3 @@
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,9 +22,37 @@ public class CompanyRepresentative extends User {
     public List<CompanyRepresentative> getAllCompanyReps() {
         return allCompanyReps;
     }
-    
+
     public List<Internship> getCreatedInternships() {
         return createdInternships;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public boolean canCreateInternship() {
+        return createdInternships.size() < 5;
+    }
+
+    public boolean isApproved() {
+        return "APPROVED".equals(status);
     }
 
     public CompanyRepresentative registerCompanyRep(String userId, String name, String email, String password, String companyName, String department, String position) {
@@ -43,8 +70,38 @@ public class CompanyRepresentative extends User {
     }
 
     public void createInternshipOpportunity(Internship internship) {
+        if (!canCreateInternship()) {
+            System.out.println("Error: Maximum of 5 internships allowed per representative.");
+            return;
+        }
         createdInternships.add(internship);
         System.out.println("Internship opportunity created: " + internship.getTitle());
+    }
+
+    public boolean deleteInternship(Internship internship) {
+        if (!createdInternships.contains(internship)) {
+            System.out.println("You do not manage this internship.");
+            return false;
+        }
+        if ("APPROVED".equals(internship.getStatus())) {
+            System.out.println("Cannot delete approved internships.");
+            return false;
+        }
+        createdInternships.remove(internship);
+        System.out.println("Internship deleted: " + internship.getTitle());
+        return true;
+    }
+
+    public boolean editInternship(Internship internship) {
+        if (!createdInternships.contains(internship)) {
+            System.out.println("You do not manage this internship.");
+            return false;
+        }
+        if ("APPROVED".equals(internship.getStatus())) {
+            System.out.println("Cannot edit approved internships.");
+            return false;
+        }
+        return true;
     }
 
     public void viewApplications() {
@@ -71,5 +128,5 @@ public class CompanyRepresentative extends User {
             viewer.rejectApplication(application);
         }
     }
-    
+
 }
