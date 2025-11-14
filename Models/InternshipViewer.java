@@ -33,8 +33,11 @@ public class InternshipViewer {
     }
 
     public void requestWithdrawal(Student student, Application application) {
+        Internship internship = application.getInternship();
+        // Mark as withdrawn (could use REJECTED or create WITHDRAWN status)
         application.setStatus(Application.ApplicationStatus.REJECTED);
-        System.out.println("Withdrawal requested for application");
+        System.out.println("Withdrawal requested for application to: " + internship.getTitle());
+        System.out.println("Please contact Career Centre Staff for approval.");
     }
 
     public List<Internship> getOpenInternships() {

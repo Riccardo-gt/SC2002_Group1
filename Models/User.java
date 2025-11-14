@@ -30,6 +30,8 @@ public abstract class User {
     public String getPassword() {
         return password; 
     }
+
+    public String getEmail() { return email; }
         
     public boolean login(String enteredPassword) {
         return this.password.equals(enteredPassword); // Use hashing

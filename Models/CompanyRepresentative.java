@@ -8,7 +8,7 @@ public class CompanyRepresentative extends User {
     private String department;
     private String status;
     private List<Internship> createdInternships;
-    private List<CompanyRepresentative> allCompanyReps;
+    private static List<CompanyRepresentative> allCompanyReps = new ArrayList<>();
 
     public CompanyRepresentative(String userId, String name, String email, String password, String companyName, String position, String department, String status) {
         super(userId, name, email, password);
@@ -28,17 +28,18 @@ public class CompanyRepresentative extends User {
         return createdInternships;
     }
 
-    public CompanyRepresentative registerCompanyRep(String userId, String email, String password, String companyName, String department, String position) {
+    public CompanyRepresentative registerCompanyRep(String userId, String name, String email, String password, String companyName, String department, String position) {
         // input validation
         if (email.isEmpty() || companyName.isEmpty() || department.isEmpty() || position.isEmpty()) {
             System.out.println("Please fill in all fields.");
+            return null;
         }
         if (!email.contains("@")) {
             System.out.println("Invalid email format.");
+            return null;
         }
-        
-        CompanyRepresentative newRep = new CompanyRepresentative(userId, name, email, password, companyName, position, department, "PENDING");
-        return newRep;
+
+        return new CompanyRepresentative(userId, name, email, password, companyName, position, department, "PENDING");
     }
 
     public void createInternshipOpportunity(Internship internship) {

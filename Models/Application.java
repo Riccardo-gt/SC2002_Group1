@@ -32,9 +32,14 @@ public class Application {
     public void setStatus(ApplicationStatus status) {
         this.status = status;
     }
-    
-    public void confirmAcceptance() { 
 
+    public void confirmAcceptance() {
+        if (this.status == ApplicationStatus.APPROVED) {
+            this.confirmed = true;
+            System.out.println("Acceptance confirmed for: " + internship.getTitle());
+        } else {
+            System.out.println("Cannot confirm - application not approved");
+        }
     }
 }
 

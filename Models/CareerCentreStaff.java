@@ -24,7 +24,7 @@ public class CareerCentreStaff extends User {
             System.out.println("Invalid company representative.");
             return false;
         }
-        System.out.println("Account authorized for: " + representative.email);
+        System.out.println("Account authorized for: " + representative.getEmail());
         return true;
     }
 
@@ -59,15 +59,15 @@ public class CareerCentreStaff extends User {
         int filledCount = 0;
 
         for (Internship internship : allInternships) {
-            if (internship.status == null) {
+            if (internship.getStatus() == null) {
                 pendingCount++;
-            } else if (internship.status.equals("Approved")) {
+            } else if (internship.getStatus().equals("Approved")) {
                 approvedCount++;
-            } else if (internship.status.equals("Pending")) {
+            } else if (internship.getStatus().equals("Pending")) {
                 pendingCount++;
-            } else if (internship.status.equals("Rejected")) {
+            } else if (internship.getStatus().equals("Rejected")) {
                 rejectedCount++;
-            } else if (internship.status.equals("Filled")) {
+            } else if (internship.getStatus().equals("Filled")) {
                 filledCount++;
             }
         }

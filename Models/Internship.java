@@ -143,8 +143,9 @@ public class Internship {
         }
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public boolean isAcceptingApplications() {
+        LocalDate today = LocalDate.now();
+        return isVisible && "Approved".equals(status) && !today.isBefore(openingDate) && !today.isAfter(closingDate);
     }
 
     public void toggleVisibility(boolean isVisible) {

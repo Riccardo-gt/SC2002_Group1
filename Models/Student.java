@@ -14,6 +14,14 @@ public class Student extends User {
         applications = new ArrayList<Application>();
     }
 
+    public Student(String userId, String name, String email, String password, String major, int studyYear) {
+        super(userId, name, email, password);
+        this.major = major;
+        this.studyYear = studyYear;
+        this.cgpa = 0.0f; // Default value
+        applications = new ArrayList<Application>();
+    }
+
     public String getMajor() {
         return this.major;
     }
@@ -30,8 +38,7 @@ public class Student extends User {
         return this.studyYear;
     }
 
-    public void viewInternshipOpportunities() {
-        InternshipViewer internshipViewer = new InternshipViewer();
+    public void viewInternshipOpportunities(InternshipViewer internshipViewer) {
         internshipViewer.viewInternships();
     }
 
@@ -61,7 +68,7 @@ public class Student extends User {
         relevantApplication.confirmAcceptance();
     }
 
-    public void widthdraw() {
+    public void withdraw() {
         InternshipViewer internshipViewer = new InternshipViewer();
         Application application = applications.get(new Random().nextInt(applications.size()));
         internshipViewer.requestWithdrawal(this, application);
