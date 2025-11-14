@@ -1,3 +1,9 @@
+#data persistence files
+applications.csv
+company_reps.csv
+internships.csv
+
+
 # Compiled class file
 *.class
 

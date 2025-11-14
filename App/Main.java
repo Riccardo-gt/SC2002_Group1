@@ -46,35 +46,37 @@ public class Main {
 
     static void registerStudents() {
         try {
-            BufferedReader file = new BufferedReader(new FileReader("students.txt"));
+            BufferedReader file = new BufferedReader(new FileReader("Datasets/sample_student_list.csv"));
             String line = file.readLine(); // Read the header
 
             while ((line = file.readLine()) != null) {
-                String[] parts = line.split("\t");
+                String[] parts = line.split(",");
+                // Format: UserID,Name,Major,Year,Email
                 Student student = new Student(parts[0], parts[1], parts[4], "password", parts[2], Integer.valueOf(parts[3]));
                 registeredAccounts.put(parts[0], student);
             }
             file.close();
             System.out.println("✓ Students loaded");
         } catch (IOException error) {
-            System.out.println("Note: students.txt not found. Starting with no students.");
+            System.out.println("Note: sample_student_list.csv not found. Starting with no students.");
         }
     }
 
     static void registerStaff() {
         try {
-            BufferedReader file = new BufferedReader(new FileReader("staff.txt"));
+            BufferedReader file = new BufferedReader(new FileReader("Datasets/sample_staff_list.csv"));
             String line = file.readLine();
 
             while ((line = file.readLine()) != null) {
                 String[] parts = line.split(",");
+                // Format: UserID,Name,Role,Department,Email
                 CareerCentreStaff staff = new CareerCentreStaff(parts[0], parts[1], parts[4], "password", parts[2], parts[3]);
                 registeredAccounts.put(parts[0], staff);
             }
             file.close();
             System.out.println("✓ Staff loaded");
         } catch (IOException error) {
-            System.out.println("Note: staff.txt not found. Starting with no staff.");
+            System.out.println("Note: sample_staff_list.csv not found. Starting with no staff.");
         }
     }
 
@@ -833,7 +835,7 @@ public class Main {
         }
     }
 
-    //extra for all
+    // ==================== COMMON ====================
 
     static void logout() {
         if (currentUser != null) {

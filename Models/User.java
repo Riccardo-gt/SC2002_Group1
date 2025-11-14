@@ -9,14 +9,13 @@ public abstract class User {
     private String name;
     private String email;
     private String password;
-    // Default password as per assignment: "password" [cite: 37]
-    private static final String DEFAULT_PASSWORD = "password"; 
+    private static final String DEFAULT_PASSWORD = "password";
 
     public User(String userID, String name, String email, String password) {
         this.userID = userID;
         this.name = name;
         this.email = email;
-        this.password = password; // Default password = "password" 
+        this.password = DEFAULT_PASSWORD; // Default password = "password"
     }
 
     public String getUserID() {
