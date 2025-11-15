@@ -114,6 +114,8 @@ public class Student extends User {
             Internship internship = app.getInternship();
             System.out.println((i + 1) + ". " + internship.getTitle() +
                     " | Status: " + app.getStatus() +
+                    " | Placement Status: " + app.isConfirmed() +
+                    " | Withdrawal Status: " + app.getWithdrawalStatus() +
                     " | Company: " + (internship.getCompanyRepresentative() != null ?
                     internship.getCompanyRepresentative().getCompanyName() : "N/A"));
         }
