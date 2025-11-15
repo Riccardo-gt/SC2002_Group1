@@ -1,3 +1,5 @@
+package Models;
+
 public class Application {
     private Student student;
     private Internship internship;

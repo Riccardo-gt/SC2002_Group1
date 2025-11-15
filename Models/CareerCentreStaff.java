@@ -1,3 +1,5 @@
+package Models;
+
 import java.util.*;
 
 public class CareerCentreStaff extends User {
