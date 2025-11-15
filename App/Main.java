@@ -57,7 +57,7 @@ public class Main {
                 registeredAccounts.put(parts[0], student);
             }
             file.close();
-            System.out.println("✓ Students loaded");
+            System.out.println("Students loaded");
         } catch (IOException error) {
             System.out.println("Note: sample_student_list.csv not found. Starting with no students.");
         }
@@ -75,7 +75,7 @@ public class Main {
                 registeredAccounts.put(parts[0], staff);
             }
             file.close();
-            System.out.println("✓ Staff loaded");
+            System.out.println("Staff loaded");
         } catch (IOException error) {
             System.out.println("Note: sample_staff_list.csv not found. Starting with no staff.");
         }
@@ -90,17 +90,17 @@ public class Main {
                 pendingCompanyReps.add(rep);
             }
         }
-        System.out.println("✓ Company representatives loaded");
+        System.out.println("Company representatives loaded");
     }
 
     static void loadInternships() {
         allInternships = FileIOHandler.loadInternships(registeredAccounts);
-        System.out.println("✓ Internships loaded");
+        System.out.println("Internships loaded");
     }
 
     static void loadApplications() {
         FileIOHandler.loadApplications(allInternships, registeredAccounts);
-        System.out.println("✓ Applications loaded");
+        System.out.println("Applications loaded");
     }
 
     static void saveAllData() {
@@ -156,9 +156,9 @@ public class Main {
         User user = registeredAccounts.get(userId);
         if (user != null && user.login(password)) {
             currentUser = user;
-            System.out.println("\n✓ Login successful! Welcome, " + user.getName());
+            System.out.println("\nLogin successful! Welcome, " + user.getName());
         } else {
-            System.out.println("\n✗ Invalid credentials. Please try again.");
+            System.out.println("\nInvalid credentials. Please try again.");
         }
     }
 
@@ -190,7 +190,7 @@ public class Main {
         pendingCompanyReps.add(rep);
         saveAllData();
 
-        System.out.println("\n✓ Registration submitted! Please wait for Career Centre Staff approval.");
+        System.out.println("\nRegistration submitted! Please wait for Career Centre Staff approval.");
     }
 
     // ==================== ROUTING ====================
@@ -257,6 +257,7 @@ public class Main {
         List<Internship> available = allInternships.stream()
                 .filter(i -> i.isAcceptingApplications())
                 .filter(i -> student.isEligibleForLevel(i.getLevel()))
+                .filter(i -> student.matchesMajor(i.getPreferredMajor()))
                 .collect(Collectors.toList());
 
         if (available.isEmpty()) {
@@ -282,6 +283,9 @@ public class Main {
         List<Internship> available = allInternships.stream()
                 .filter(i -> i.isAcceptingApplications())
                 .filter(i -> student.isEligibleForLevel(i.getLevel()))
+                .filter(i -> student.matchesMajor(i.getPreferredMajor()))
+                .filter(i -> i.getApplications().stream()
+                        .noneMatch(app -> app.getStudent().equals(student)))  // not already applied
                 .collect(Collectors.toList());
 
         if (available.isEmpty()) {
@@ -289,7 +293,19 @@ public class Main {
             return;
         }
 
-        viewAvailableInternshipsForStudent(student);
+        System.out.println("\n=== Available Internships ===");
+        for (int i = 0; i < available.size(); i++) {
+            Internship internship = available.get(i);
+            System.out.println("\n[" + (i + 1) + "] " + internship.getTitle());
+            System.out.println("    Company: " + (internship.getCompanyRepresentative() != null ?
+                    internship.getCompanyRepresentative().getCompanyName() : "N/A"));
+            System.out.println("    Level: " + internship.getLevel());
+            System.out.println("    Preferred Major: " + internship.getPreferredMajor());
+            System.out.println("    Description: " + internship.getDescription());
+            System.out.println("    Period: " + internship.getOpeningDate() + " to " + internship.getClosingDate());
+            System.out.println("    Slots: " + internship.getSlots());
+        }
+
         System.out.print("\nEnter internship number to apply (0 to cancel): ");
 
         try {
@@ -310,8 +326,17 @@ public class Main {
     }
 
     static void acceptPlacement(Student student) {
+        // Check if already accepted a placement
+        boolean hasConfirmedPlacement = student.getApplications().stream()
+                .anyMatch(app -> app.isConfirmed());
+        if (hasConfirmedPlacement) {
+            System.out.println("\nYou have already accepted a placement. No further placements can be accepted.");
+            return;
+        }
+
         List<Application> approved = student.getApplications().stream()
-                .filter(app -> app.getStatus() == Application.ApplicationStatus.APPROVED)
+                .filter(app -> app.getStatus() == Application.ApplicationStatus.SUCCESSFUL)
+                .filter(app -> !app.isConfirmed())  
                 .collect(Collectors.toList());
 
         if (approved.isEmpty()) {
@@ -454,7 +479,7 @@ public class Main {
             allInternships.add(internship);
             saveAllData();
 
-            System.out.println("\n✓ Internship created! Waiting for Career Centre approval.");
+            System.out.println("\nInternship created! Waiting for Career Centre approval.");
         } catch (DateTimeParseException | NumberFormatException e) {
             System.out.println("Error: Invalid input format.");
         }
@@ -499,6 +524,11 @@ public class Main {
             }
 
             Internship internship = myInternships.get(choice - 1);
+            // Allow edits only if status is Pending
+            if (!internship.getStatus().equals("Pending")) {
+                System.out.println("\n✗ Cannot edit internship after staff approval.");
+                return;
+            }
             if (!rep.editInternship(internship)) {
                 return;
             }
@@ -513,7 +543,7 @@ public class Main {
             if (!desc.isEmpty()) internship.setDescription(desc);
 
             saveAllData();
-            System.out.println("\n✓ Internship updated.");
+            System.out.println("\nInternship updated.");
 
         } catch (NumberFormatException e) {
             System.out.println("Invalid input.");
@@ -582,17 +612,33 @@ public class Main {
             System.out.print("\nEnter application number to manage (0 to cancel): ");
             int appChoice = Integer.parseInt(scanner.nextLine().trim());
             if (appChoice == 0) return;
-            if (appChoice < 1 || appChoice > apps.size()) {
+
+            List<Application> rankedApps = viewer.getRankedApplicants();
+                  if (rankedApps == null || rankedApps.isEmpty()) {
+                System.out.println("No applications available to manage.");
+                return;
+            }
+            if (appChoice < 1 || appChoice > rankedApps.size()) {
                 System.out.println("Invalid selection.");
                 return;
             }
 
-            Application application = apps.get(appChoice - 1);
+            Application application = rankedApps.get(appChoice - 1);
+
             System.out.print("Approve or Reject? (A/R): ");
             String action = scanner.nextLine().trim().toUpperCase();
 
             if (action.equals("A")) {
                 viewer.approveApplication(application);
+                // Handle withdrawn / withdrawal pending applications 
+                if (application.getStatus() == Application.ApplicationStatus.WITHDRAWN) {
+                    System.out.println("\nThis application has already been withdrawn and cannot be managed.");
+                    return;
+                }
+                if (application.getWithdrawalStatus() == Application.WithdrawalStatus.PENDING) {
+                    System.out.println("\nStudent has requested withdrawal for this application. Staff must process withdrawal requests.");
+                    return;
+                }
             } else if (action.equals("R")) {
                 viewer.rejectApplication(application);
             } else {
@@ -663,7 +709,7 @@ public class Main {
                 approveInternships(staff);
                 break;
             case "3":
-                approveWithdrawals(staff);
+                manageWithdrawalRequests(staff);
                 break;
             case "4":
                 generateReports(staff);
@@ -713,10 +759,10 @@ public class Main {
                 rep.setStatus("APPROVED");
                 registeredAccounts.put(rep.getUserID(), rep);
                 pendingCompanyReps.remove(choice - 1);
-                System.out.println("✓ Company representative approved.");
+                System.out.println("Company representative approved.");
             } else if (action.equals("R")) {
                 pendingCompanyReps.remove(choice - 1);
-                System.out.println("✓ Company representative rejected.");
+                System.out.println("Company representative rejected.");
             }
 
             saveAllData();
@@ -763,7 +809,7 @@ public class Main {
                 staff.approveInternshipOpportunity(internship);
             } else if (action.equals("R")) {
                 internship.setStatus("Rejected");
-                System.out.println("✓ Internship rejected.");
+                System.out.println("Internship rejected.");
             }
 
             saveAllData();
@@ -773,10 +819,62 @@ public class Main {
         }
     }
 
-    static void approveWithdrawals(CareerCentreStaff staff) {
-        System.out.println("\n=== Withdrawal Requests ===");
-        System.out.println("(Feature requires tracking withdrawal requests separately)");
-        System.out.println("Current implementation: Students can request, staff manually approve.");
+    static void manageWithdrawalRequests(CareerCentreStaff staff) {
+        List<Application> pending = allInternships.stream()
+                .flatMap(i -> i.getApplications().stream())
+                .filter(a -> a.getWithdrawalStatus() == Application.WithdrawalStatus.PENDING)
+                .collect(Collectors.toList());
+
+        if (pending.isEmpty()) {
+            System.out.println("\nNo pending withdrawals to approve.");
+            return;
+        }
+
+        System.out.println("\n=== Pending Withdrawals ===");
+        for (int i = 0; i < pending.size(); i++) {
+            Application a = pending.get(i);
+            System.out.println("\n[" + (i + 1) + "] Internship: " + a.getInternship().getTitle());
+            System.out.println("    Student: " + a.getStudent().getName() + " (" + a.getStudent().getUserID() + ")");
+            System.out.println("    Status: " + a.getStatus());
+            System.out.println("    Placement Status: " + a.isConfirmed());
+        }
+
+        System.out.print("\nSelect request number to process (0 to cancel): ");
+        try {
+            int sel = Integer.parseInt(scanner.nextLine().trim());
+            if (sel == 0) return;
+            if (sel < 1 || sel > pending.size()) {
+                System.out.println("Invalid selection.");
+                return;
+            }
+
+            Application app = pending.get(sel - 1);
+            System.out.print("Approve or Reject? (A/R): ");
+            String action = scanner.nextLine().trim().toUpperCase();
+
+            if (action.equals("A")) {
+                if (staff.approveWithdrawal(app)) {
+                    System.out.println("Withdrawal approved; application marked as Withdrawn.");
+                } else {
+                    System.out.println("Unable to approve withdrawal (not pending).");
+                }
+            } else if (action.equals("R")) {
+                if (staff.rejectWithdrawal(app)) {
+                    System.out.println("Withdrawal request rejected.");
+                } else {
+                    System.out.println("Unable to reject withdrawal (not pending).");
+                }
+            } else {
+                System.out.println("Invalid action.");
+                return;
+            }
+
+            // If approving a withdrawal may free a slot or affect internship state, handle here.
+            saveAllData();
+
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input.");
+        }
     }
 
     static void generateReports(CareerCentreStaff staff) {
@@ -787,40 +885,29 @@ public class Main {
         System.out.println("4. Filter by Major");
         System.out.print("Select filter: ");
 
-        String choice = scanner.nextLine().trim();
-        List<Internship> filtered = new ArrayList<>(allInternships);
+        int choice = Integer.parseInt(scanner.nextLine().trim());
+        String filter = "";
 
         switch (choice) {
-            case "1":
-                // All internships
+            case 1:
+                filter = "";
                 break;
-            case "2":
-                System.out.print("Enter status (Pending/Approved/Rejected/Filled): ");
-                String status = scanner.nextLine().trim();
-                filtered = allInternships.stream()
-                        .filter(i -> status.equalsIgnoreCase(i.getStatus()))
-                        .collect(Collectors.toList());
+            case 2:
+                filter = "Approved";
                 break;
-            case "3":
-                System.out.print("Enter level (Basic/Intermediate/Advanced): ");
-                String level = scanner.nextLine().trim();
-                filtered = allInternships.stream()
-                        .filter(i -> level.equalsIgnoreCase(i.getLevel()))
-                        .collect(Collectors.toList());
+            case 3:
+                filter = "Pending";
                 break;
-            case "4":
-                System.out.print("Enter major: ");
-                String major = scanner.nextLine().trim();
-                filtered = allInternships.stream()
-                        .filter(i -> major.equalsIgnoreCase(i.getPreferredMajor()))
-                        .collect(Collectors.toList());
+            case 4:
+                filter = "Rejected";
                 break;
             default:
-                System.out.println("Invalid option.");
+                System.out.println("Invalid choice.");
                 return;
         }
 
-        staff.generateReport(filtered);
+        staff.generateReport(allInternships, filter);
+        
     }
 
     static void viewAllInternships() {

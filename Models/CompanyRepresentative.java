@@ -8,7 +8,7 @@ public class CompanyRepresentative extends User {
     private String position;
     private String department;
     private String status;
-    private List<Internship> createdInternships;
+    private List<Internship> createdInternships = new ArrayList<>();
     private static List<CompanyRepresentative> allCompanyReps = new ArrayList<>();
 
     public CompanyRepresentative(String userId, String name, String email, String password, String companyName, String position, String department, String status) {

@@ -6,15 +6,24 @@ import java.util.stream.Collectors;
 public class ApplicationViewer {
     private Internship currentInternship;
     private List<Application> applications;
+    private List<Application> rankedApplicants;
 
     public ApplicationViewer(Internship internship) {
         this.currentInternship = internship;
         this.applications = new ArrayList<>(internship.getApplications());
     }
 
+     public List<Application> getRankedApplicants() {
+        return rankedApplicants;
+    }
+
     // Display all applicants for the current internship
     public void displayApplicants() {
         System.out.println("=== Applicants for: " + currentInternship.getTitle() + " ===");
+        List<Application> activeApplications = applications.stream()
+            .filter(app -> app.getStatus() != Application.ApplicationStatus.WITHDRAWN)
+            .collect(Collectors.toList());
+        
         System.out.println("Total Applications: " + applications.size());
         
         if (applications.isEmpty()) {
@@ -34,19 +43,33 @@ public class ApplicationViewer {
     // Rank applicants based on criteria (GPA, major match, and year of study)
     public void rankApplicants() {
         System.out.println("=== Ranked Applicants for: " + currentInternship.getTitle() + " ===");
+
+        List<Application> activeApplications = applications.stream()
+                .filter(app -> app.getStatus() != Application.ApplicationStatus.WITHDRAWN && !app.isConfirmed())
+                .collect(Collectors.toList());
         
-        List<Application> rankedApplications = applications.stream()
+        if (activeApplications.isEmpty()) {
+            System.out.println("No active applications.");
+            this.rankedApplicants = new ArrayList<>();  // Initialize empty list
+            return;
+        }
+        
+        this.rankedApplicants = applications.stream()
                 .sorted((a1, a2) -> Integer.compare(
                         calculateApplicantScore(a2), calculateApplicantScore(a1)))
                 .collect(Collectors.toList());
 
         int rank = 1;
-        for (Application app : rankedApplications) {
+        for (Application app : rankedApplicants) {
             Student student = app.getStudent();
             int score = calculateApplicantScore(app);
             System.out.println(rank + ". " + student.getName() +
                                " | Score: " + score +
-                               " | Status: " + app.getStatus());
+                               " | Status: " + app.getStatus() +
+                               " | CGPA: " + student.getCGPA() +
+                               " | Major: " + student.getMajor() +
+                               " | Year: " + student.getYearOfStudy() +
+                            " | Withdrawal: " + app.getWithdrawalStatus());
             rank++;
         }
     }
@@ -76,13 +99,22 @@ public class ApplicationViewer {
             return false;
         }
 
-        if (application.getStatus() == Application.ApplicationStatus.APPROVED) {
-            System.out.println("Application is already approved.");
+        if (application.getStatus() == Application.ApplicationStatus.WITHDRAWN) {
+            System.out.println("Cannot manage application: it has already been withdrawn.");
+            return false;
+        }
+        if (application.getWithdrawalStatus() == Application.WithdrawalStatus.PENDING) {
+            System.out.println("Cannot reject application: student has requested withdrawal (pending).");
+            return false;
+        }
+
+        if (application.getStatus() == Application.ApplicationStatus.SUCCESSFUL) {
+            System.out.println("Application is already successful.");
             return true;
         }
 
-        application.setStatus(Application.ApplicationStatus.APPROVED);
-        System.out.println("Application approved for: " + application.getStudent().getName());
+        application.setStatus(Application.ApplicationStatus.SUCCESSFUL);
+        System.out.println("Application successful for: " + application.getStudent().getName());
         return true;
     }
 
@@ -93,13 +125,13 @@ public class ApplicationViewer {
             return false;
         }
 
-        if (application.getStatus() == Application.ApplicationStatus.REJECTED) {
-            System.out.println("Application is already rejected.");
+        if (application.getStatus() == Application.ApplicationStatus.UNSUCCESSFUL) {
+            System.out.println("Application is already unsucessful.");
             return true;
         }
 
-        application.setStatus(Application.ApplicationStatus.REJECTED);
-        System.out.println("Application rejected for: " + application.getStudent().getName());
+        application.setStatus(Application.ApplicationStatus.UNSUCCESSFUL);
+        System.out.println("Application unsucessful for: " + application.getStudent().getName());
         return true;
     }
 }

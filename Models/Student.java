@@ -49,7 +49,7 @@ public class Student extends User {
      */
     public boolean canApply() {
         long activeApplications = applications.stream()
-                .filter(app -> app.getStatus() != Application.ApplicationStatus.REJECTED)
+                .filter(app -> app.getStatus() != Application.ApplicationStatus.UNSUCCESSFUL)
                 .count();
         return activeApplications < 3;
     }
@@ -125,7 +125,7 @@ public class Student extends User {
             return false;
         }
 
-        if (application.getStatus() != Application.ApplicationStatus.APPROVED) {
+        if (application.getStatus() != Application.ApplicationStatus.SUCCESSFUL) {
             System.out.println("Error: Can only accept approved applications.");
             return false;
         }
@@ -133,10 +133,15 @@ public class Student extends User {
         // Confirm acceptance
         application.confirmAcceptance();
 
+        // Decrease slot count for the internship
+        Internship internship = application.getInternship();
+        internship.setSlots(internship.getSlots() - 1);
+        System.out.println("You have accepted the placement for: " + internship.getTitle());
+
         // Withdraw all other applications
         for (Application app : applications) {
             if (app != application && app.getStatus() == Application.ApplicationStatus.PENDING) {
-                app.setStatus(Application.ApplicationStatus.REJECTED);
+                app.setStatus(Application.ApplicationStatus.UNSUCCESSFUL);
                 System.out.println("Automatically withdrew application for: " + app.getInternship().getTitle());
             }
         }
@@ -149,7 +154,11 @@ public class Student extends User {
             System.out.println("Error: Application not found.");
             return false;
         }
-
+        if (application.getWithdrawalStatus() != Application.WithdrawalStatus.NOTREQUESTED) {
+            System.out.println("Error: Withdrawal already requested.");
+            return false;
+        }
+        application.setWithdrawalStatus(Application.WithdrawalStatus.PENDING);
         System.out.println("Withdrawal requested for: " + application.getInternship().getTitle());
         System.out.println("Please contact Career Centre Staff for approval.");
         return true;

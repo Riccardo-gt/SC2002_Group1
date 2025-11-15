@@ -1,6 +1,8 @@
 package Models;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
 
 public class CareerCentreStaff extends User {
     private String role;
@@ -46,13 +48,31 @@ public class CareerCentreStaff extends User {
             System.out.println("Invalid application.");
             return false;
         }
-        application.setStatus(Application.ApplicationStatus.REJECTED);
+        application.setStatus(Application.ApplicationStatus.WITHDRAWN);
+        application.setWithdrawalStatus(Application.WithdrawalStatus.APPROVED);
         System.out.println("Withdrawal approved for: " + application.getStudent().getName());
         return true;
     }
 
-    public void generateReport(List<Internship> allInternships) {
+    public boolean rejectWithdrawal(Application application) { // Should return boolean
+        if (application == null) {
+            System.out.println("Invalid application.");
+            return false;
+        }
+        application.setWithdrawalStatus(Application.WithdrawalStatus.REJECTED);
+        System.out.println("Withdrawal rejected for: " + application.getStudent().getName());
+        return true;
+    }
+
+    public void generateReport(List<Internship> allInternships, String filter) {
         System.out.println("=== Career Centre Report ===");
+        
+        List<Internship> filtered = allInternships;
+        if (filter != null && !filter.isEmpty()) {
+            filtered = allInternships.stream()
+                    .filter(i -> i.getStatus().equalsIgnoreCase(filter))
+                    .collect(Collectors.toList());
+        }
 
         int totalInternships = allInternships.size();
         int approvedCount = 0;

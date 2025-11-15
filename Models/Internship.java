@@ -158,7 +158,7 @@ public class Internship {
     public void checkFilledStatus() {
         if (slots > 0) {
             long acceptedCount = applications.stream()
-                .filter(app -> app.getStatus() == Application.ApplicationStatus.APPROVED)
+                .filter(app -> app.getStatus() == Application.ApplicationStatus.SUCCESSFUL)
                 .count();
             
             if (acceptedCount >= slots && !"Filled".equals(status)) {

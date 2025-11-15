@@ -115,7 +115,7 @@ public class FileIOHandler {
     public static void saveApplications(List<Internship> internships) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(APPLICATIONS_FILE))) {
             // Write header
-            writer.println("applicationID,studentID,internshipID,status,confirmed");
+            writer.println("applicationID,studentID,internshipID,status,withdrawalStatus,confirmed");
 
             int appID = 1;
             int internshipID = 1;
@@ -126,6 +126,7 @@ public class FileIOHandler {
                             application.getStudent().getUserID(),
                             internshipID,
                             application.getStatus().toString(),
+                            application.getWithdrawalStatus().toString(),
                             false // confirmed field from Application class
                     );
                 }
@@ -150,13 +151,14 @@ public class FileIOHandler {
             String line = reader.readLine(); // Skip header
 
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
+                String[] parts = line.split(",",-1);
                 if (parts.length < 4) continue;
 
                 try {
                     String studentID = parts[1];
                     int internshipID = Integer.parseInt(parts[2]) - 1; // 0-indexed
                     String status = parts[3];
+                    String withdrawalStr = parts.length >= 5 ? parts[4] : "";
 
                     if (internshipID < 0 || internshipID >= internships.size()) continue;
                     if (!users.containsKey(studentID)) continue;
