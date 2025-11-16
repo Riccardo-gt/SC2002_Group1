@@ -92,7 +92,9 @@ public class FileIOHandler {
                     if (!repID.isEmpty() && users.containsKey(repID)) {
                         User user = users.get(repID);
                         if (user instanceof CompanyRepresentative) {
-                            internship.setCompanyRepresentative((CompanyRepresentative) user);
+                            CompanyRepresentative rep = (CompanyRepresentative) user;
+                            rep.loadInternships(internship);
+                            internship.setCompanyRepresentative(rep);
                         }
                     }
 

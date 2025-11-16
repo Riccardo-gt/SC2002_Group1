@@ -8,7 +8,7 @@ public class CompanyRepresentative extends User {
     private String position;
     private String department;
     private String status;
-    private List<Internship> createdInternships = new ArrayList<>();
+    private static List<Internship> createdInternships = new ArrayList<>();
     private static List<CompanyRepresentative> allCompanyReps = new ArrayList<>();
 
     public CompanyRepresentative(String userId, String name, String email, String password, String companyName, String position, String department, String status) {
@@ -17,7 +17,7 @@ public class CompanyRepresentative extends User {
         this.position = position;
         this.department = department;
         this.status = status;
-        this.createdInternships = new ArrayList<>();
+        //this.createdInternships = new ArrayList<>();
         allCompanyReps.add(this);
     }
 
@@ -69,6 +69,10 @@ public class CompanyRepresentative extends User {
         }
 
         return new CompanyRepresentative(userId, name, email, password, companyName, position, department, "PENDING");
+    }
+
+    public void loadInternships(Internship internship) {
+        createdInternships.add(internship);
     }
 
     public void createInternshipOpportunity(Internship internship) {
