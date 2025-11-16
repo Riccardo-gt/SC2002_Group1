@@ -8,7 +8,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
-import Models.*;
+import Models.Entities.*;
+import Models.Utility_Classes.*;
 
 public class Main {
     static HashMap<String, User> registeredAccounts = new HashMap<>();
@@ -25,7 +26,7 @@ public class Main {
         // Load all data
         loadData();
 
-        // Main application loop
+        // App.Main application loop
         while (true) {
             if (currentUser == null) {
                 showLoginMenu();
@@ -1015,6 +1016,4 @@ public class Main {
         }
         saveAllData();
     }
-
-
 }

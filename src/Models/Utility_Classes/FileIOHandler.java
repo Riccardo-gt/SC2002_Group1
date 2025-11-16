@@ -1,4 +1,6 @@
-package Models;
+package Models.Utility_Classes;
+
+import Models.Entities.*;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -182,7 +184,7 @@ public class FileIOHandler {
                     application.setStatus(Application.ApplicationStatus.valueOf(status));
 
                     internship.addApplication(application);
-                    student.applications.add(application);
+                    student.getApplications().add(application);
 
                 } catch (Exception e) {
                     System.err.println("Error parsing application line: " + line);

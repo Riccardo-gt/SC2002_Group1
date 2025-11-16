@@ -1,4 +1,4 @@
-package Models;
+package Models.Entities;
 
 public class Application {
     private Student student;

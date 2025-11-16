@@ -1,4 +1,4 @@
-package Models;
+package Models.Entities;
 
 import java.util.*;
 import java.util.stream.Collectors;

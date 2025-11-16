@@ -1,4 +1,8 @@
-package Models;
+package Models.Utility_Classes;
+
+import Models.Entities.Application;
+import Models.Entities.Internship;
+import Models.Entities.Student;
 
 import java.util.*;
 import java.util.stream.Collectors;

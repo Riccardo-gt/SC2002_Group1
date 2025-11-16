@@ -1,14 +1,16 @@
 #data persistence files
-applications.csv
-company_reps.csv
-internships.csv
+Datasets/applications.csv
+Datasets/company_reps.csv
+Datasets/internships.csv
 
-
-# Compiled class file
-*.class
+# Compiled class files
+out.*
 
 # Log file
 *.log
+
+# IML files
+*.iml
 
 # BlueJ files
 *.ctxt

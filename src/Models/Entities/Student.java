@@ -1,4 +1,6 @@
-package Models;
+package Models.Entities;
+
+import Models.Utility_Classes.InternshipViewer;
 
 import java.util.*;
 
