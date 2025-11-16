@@ -14,9 +14,9 @@ public class FileIOHandler {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     // File paths
-    private static final String INTERNSHIPS_FILE = "internships.csv";
-    private static final String APPLICATIONS_FILE = "applications.csv";
-    private static final String COMPANY_REPS_FILE = "company_reps.csv";
+    private static final String INTERNSHIPS_FILE = "Datasets/internships.csv";
+    private static final String APPLICATIONS_FILE = "Datasets/applications.csv";
+    private static final String COMPANY_REPS_FILE = "Datasets/company_reps.csv";
 
     // ==================== INTERNSHIP PERSISTENCE ====================
 

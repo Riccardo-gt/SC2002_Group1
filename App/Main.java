@@ -49,7 +49,7 @@ public class Main {
 
     static void registerStudents() {
         try {
-            BufferedReader file = new BufferedReader(new FileReader("Datasets/sample_student_list.csv"));
+            BufferedReader file = new BufferedReader(new FileReader("Datasets/student_list.csv"));
             String line = file.readLine(); // Read the header
 
             while ((line = file.readLine()) != null) {
@@ -72,7 +72,7 @@ public class Main {
 
     static void registerStaff() {
         try {
-            BufferedReader file = new BufferedReader(new FileReader("Datasets/sample_staff_list.csv"));
+            BufferedReader file = new BufferedReader(new FileReader("Datasets/staff_list.csv"));
             String line = file.readLine();
 
             while ((line = file.readLine()) != null) {
@@ -984,5 +984,5 @@ public class Main {
         saveAllData();
     }
 
-    
+
 }
