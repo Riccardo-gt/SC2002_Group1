@@ -42,6 +42,16 @@ public abstract class User {
         System.out.println(this.name + " (" + this.userID + ") has been logged out.");
     }
 
+    public void resetPassword(Scanner scanner) {
+        System.out.println("Enter new password (Ensure it has at least 1 Uppercase, 1 Lowercase, 1 special character (!@#$%), and 1 number):");
+        String newPassword = scanner.nextLine().trim();
+        if (isPasswordValid(newPassword) == false) {
+            System.out.println("\nInvalid password. Please try again.");
+            return;
+        }
+        this.password = newPassword;
+    }
+
     public void changePassword(Scanner scanner) {
         System.out.println("--- Change Password ---");
         String currentPassword;
@@ -49,7 +59,7 @@ public abstract class User {
 
         // 1. Verify Current Password
         System.out.print("Enter current password: ");
-        currentPassword = scanner.nextLine(); // Using nextLine() for password input
+        currentPassword = scanner.nextLine().trim();
 
         if (!currentPassword.equals(this.password)) {
             System.out.println("Error: Current password incorrect. Password change aborted.");

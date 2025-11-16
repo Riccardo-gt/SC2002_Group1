@@ -162,16 +162,22 @@ public class Main {
     static void login() {
         System.out.print("\nEnter User ID: ");
         String userId = scanner.nextLine().trim();
-        System.out.print("Enter Password: ");
-        String password = scanner.nextLine();
-
         User user = registeredAccounts.get(userId);
-        if (user != null && user.login(password)) {
-            currentUser = user;
-            System.out.println("\nLogin successful! Welcome, " + user.getName());
-        } else {
-            System.out.println("\nInvalid credentials. Please try again.");
+        if (user == null) {
+            System.out.println("\nInvalid username. Please try again.");
+            return;
         }
+        System.out.print("Enter Password or click 1 if you forgot your password and wish to reset it: ");
+        String password = scanner.nextLine().trim();
+        if (password.equals("1")) {
+            user.resetPassword(scanner);
+        }
+        else if (!user.login(password)) {
+            System.out.println("\nInvalid password. Please try again.");
+            return;
+        }
+        currentUser = user;
+        System.out.println("\nLogin successful! Welcome, " + currentUser.getName());
     }
 
     static void registerCompanyRep() {
