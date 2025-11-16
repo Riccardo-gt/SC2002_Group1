@@ -1,3 +1,5 @@
+package App;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -138,16 +140,16 @@ public class Main {
         System.out.println("╚════════════════════════════════════════╝");
         System.out.print("Select option: ");
 
-        String choice = scanner.nextLine().trim();
+        int choice = Integer.parseInt(scanner.nextLine().trim());
 
         switch (choice) {
-            case "1":
+            case 1:
                 login();
                 break;
-            case "2":
+            case 2:
                 registerCompanyRep();
                 break;
-            case "3":
+            case 3:
                 saveAllData();
                 System.out.println("\nThank you for using the system. Goodbye!");
                 System.exit(0);
@@ -232,29 +234,29 @@ public class Main {
         System.out.println("╚══════════════════════════════════════════╝");
         System.out.print("Select option: ");
 
-        String choice = scanner.nextLine().trim();
+        int choice = Integer.parseInt(scanner.nextLine().trim());
 
         switch (choice) {
-            case "1":
+            case 1:
                 viewAvailableInternshipsForStudent(student);
                 break;
-            case "2":
+            case 2:
                 applyForInternship(student);
                 break;
-            case "3":
+            case 3:
                 student.viewAppliedInternships();
                 break;
-            case "4":
+            case 4:
                 acceptPlacement(student);
                 break;
-            case "5":
+            case 5:
                 requestWithdrawal(student);
                 break;
-            case "6":
+            case 6:
                 currentUser.changePassword(scanner);
                 saveAllData();
                 break;
-            case "7":
+            case 7:
                 logout();
                 break;
             default:
@@ -426,35 +428,35 @@ public class Main {
         System.out.println("╚══════════════════════════════════════════╝");
         System.out.print("Select option: ");
 
-        String choice = scanner.nextLine().trim();
+        int choice = Integer.parseInt(scanner.nextLine().trim());
 
         switch (choice) {
-            case "1":
+            case 1:
                 createInternship(rep);
                 break;
-            case "2":
+            case 2:
                 viewMyInternships(rep);
                 break;
-            case "3":
+            case 3:
                 editInternship(rep);
                 break;
-            case "4":
+            case 4:
                 deleteInternship(rep);
                 break;
-            case "5":
+            case 5:
                 rep.viewApplications();
                 break;
-            case "6":
+            case 6:
                 manageApplications(rep);
                 break;
-            case "7":
+            case 7:
                 toggleVisibility(rep);
                 break;
-            case "8":
+            case 8:
                 currentUser.changePassword(scanner);
                 saveAllData();
                 break;
-            case "9":
+            case 9:
                 logout();
                 break;
             default:
@@ -728,29 +730,29 @@ public class Main {
         System.out.println("╚══════════════════════════════════════════╝");
         System.out.print("Select option: ");
 
-        String choice = scanner.nextLine().trim();
+        int choice = Integer.parseInt(scanner.nextLine().trim());
 
         switch (choice) {
-            case "1":
+            case 1:
                 authorizeCompanyReps(staff);
                 break;
-            case "2":
+            case 2:
                 approveInternships(staff);
                 break;
-            case "3":
+            case 3:
                 manageWithdrawalRequests(staff);
                 break;
-            case "4":
+            case 4:
                 generateReports(staff);
                 break;
-            case "5":
+            case 5:
                 viewAllInternships();
                 break;
-            case "6":
+            case 6:
                 currentUser.changePassword(scanner);
                 saveAllData();
                 break;
-            case "7":
+            case 7:
                 logout();
                 break;
             default:
