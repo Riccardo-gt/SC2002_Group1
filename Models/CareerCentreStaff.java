@@ -63,60 +63,36 @@ public class CareerCentreStaff extends User {
         System.out.println("Withdrawal rejected for: " + application.getStudent().getName());
         return true;
     }
-
-    public void generateReport(List<Internship> allInternships, String filterType, String filterValue) {
+    
+    public void generateReport(List<Internship> allInternships, String filter, int filterType) {
         System.out.println("=== Career Centre Report ===");
-
         List<Internship> filtered = allInternships;
-        if (filterType != null && !filterType.isEmpty()) {
-            if (filterType.equals("status")) {
-                filtered = allInternships.stream()
-                        .filter(i -> i.getStatus().equalsIgnoreCase(filterValue))
-                        .collect(Collectors.toList());
-            } else if (filterType.equals("level")) {
-                filtered = allInternships.stream()
-                        .filter(i -> i.getLevel().equalsIgnoreCase(filterValue))
-                        .collect(Collectors.toList());
-            } else if (filterType.equals("major")) {
-                filtered = allInternships.stream()
-                        .filter(i -> i.getPreferredMajor().equalsIgnoreCase(filterValue))
-                        .collect(Collectors.toList());
-            }
+        switch (filterType) {
+            case 1:
+                if (filter != null && !filter.isEmpty()) {
+                    filtered = allInternships.stream()
+                            .filter(i -> i.getStatus().equalsIgnoreCase(filter))
+                            .collect(Collectors.toList());
+                }
+                System.out.println("Total Internships with status = " + filter + " is " + filtered.size());
+                break;
+            case 2:
+                if (filter != null && !filter.isEmpty()) {
+                    filtered = allInternships.stream()
+                            .filter(i -> i.getLevel().equalsIgnoreCase(filter))
+                            .collect(Collectors.toList());
+                }
+                System.out.println("Total Internships with level = " + filter + " is " + filtered.size());
+                break;
+            case 3:
+                if (filter != null && !filter.isEmpty()) {
+                    filtered = allInternships.stream()
+                            .filter(i -> i.getPreferredMajor().equalsIgnoreCase(filter))
+                            .collect(Collectors.toList());
+                }
+                System.out.println("Total Internships with preferred major = " + filter + " is " + filtered.size());
+                break;
         }
-
-        int totalInternships = allInternships.size();
-        int approvedCount = 0;
-        int pendingCount = 0;
-        int rejectedCount = 0;
-        int filledCount = 0;
-
-        for (Internship internship : allInternships) {
-            if (internship.getStatus() == null) {
-                pendingCount++;
-            } else if (internship.getStatus().equals("Approved")) {
-                approvedCount++;
-            } else if (internship.getStatus().equals("Pending")) {
-                pendingCount++;
-            } else if (internship.getStatus().equals("Rejected")) {
-                rejectedCount++;
-            } else if (internship.getStatus().equals("Filled")) {
-                filledCount++;
-            }
-        }
-
-        System.out.println("Total Internships: " + totalInternships);
-        System.out.println("Approved: " + approvedCount);
-        System.out.println("Pending: " + pendingCount);
-        System.out.println("Rejected: " + rejectedCount);
-        System.out.println("Filled: " + filledCount);
-
-        int totalApplications = 0;
-        for (Internship internship : allInternships) {
-            if (internship.getApplications() != null) {
-                totalApplications += internship.getApplications().size();
-            }
-        }
-        System.out.println("Total Applications: " + totalApplications);
     }
 
 }
