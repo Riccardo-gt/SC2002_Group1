@@ -45,9 +45,9 @@ public abstract class User {
     public void resetPassword(Scanner scanner) {
         System.out.println("Enter new password (Ensure it has at least 1 Uppercase, 1 Lowercase, 1 special character (!@#$%), and 1 number):");
         String newPassword = scanner.nextLine().trim();
-        if (isPasswordValid(newPassword) == false) {
-            System.out.println("\nInvalid password. Please try again.");
-            return;
+        while (isPasswordValid(newPassword) == false) {
+            System.out.println("Password does not meet complexity requirements. Please re-enter a valid password:");
+            newPassword = scanner.nextLine().trim();
         }
         this.password = newPassword;
     }
@@ -77,7 +77,7 @@ public abstract class User {
         }
 
         this.password = newPassword;
-        System.out.println("Password successfully updated. Please log in again with your new password.");
+        System.out.println("Password successfully updated!");
     }
     
     private boolean isPasswordValid(String password) {
