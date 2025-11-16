@@ -140,8 +140,13 @@ public class Main {
         System.out.println("╚════════════════════════════════════════╝");
         System.out.print("Select option: ");
 
-        int choice = Integer.parseInt(scanner.nextLine().trim());
-
+        int choice;
+        try {
+            choice = Integer.parseInt(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input.");
+            return;
+        }
         switch (choice) {
             case 1:
                 login();
@@ -240,7 +245,13 @@ public class Main {
         System.out.println("╚══════════════════════════════════════════╝");
         System.out.print("Select option: ");
 
-        int choice = Integer.parseInt(scanner.nextLine().trim());
+        int choice;
+        try {
+            choice = Integer.parseInt(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input.");
+            return;
+        }
 
         switch (choice) {
             case 1:
@@ -434,7 +445,13 @@ public class Main {
         System.out.println("╚══════════════════════════════════════════╝");
         System.out.print("Select option: ");
 
-        int choice = Integer.parseInt(scanner.nextLine().trim());
+        int choice;
+        try {
+            choice = Integer.parseInt(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input.");
+            return;
+        }
 
         switch (choice) {
             case 1:
@@ -731,7 +748,13 @@ public class Main {
         System.out.println("╚══════════════════════════════════════════╝");
         System.out.print("Select option: ");
 
-        int choice = Integer.parseInt(scanner.nextLine().trim());
+        int choice;
+        try {
+            choice = Integer.parseInt(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input.");
+            return;
+        }
 
         switch (choice) {
             case 1:
@@ -922,8 +945,16 @@ public class Main {
         System.out.println("3. Filter by Preferred Major");
         System.out.print("Select filter: ");
 
-        int choice = Integer.parseInt(scanner.nextLine().trim()), filterType;
+        int choice;   // default so it compiles
+        int filterType;
         String filter;
+
+        try {
+            choice = Integer.parseInt(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input.");
+            return;
+        }
 
         switch (choice) {
             case 1:
