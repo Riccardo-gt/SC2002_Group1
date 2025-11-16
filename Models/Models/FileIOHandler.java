@@ -292,10 +292,131 @@ public class FileIOHandler {
      * Save all data at once
      */
     public static void saveAllData(List<Internship> internships,
-            List<CompanyRepresentative> reps,
-            HashMap<String, User> users) {
+                                   List<CompanyRepresentative> reps,
+                                   HashMap<String, User> users) {
         saveInternships(internships, users);
         saveApplications(internships);
         saveCompanyReps(reps);
+    }
+
+    // ==================== PASSWORD HANDLING METHODS ====================
+
+    /**
+     * Update password for a specific user in their respective CSV file
+     */
+    public static boolean updateUserPassword(User user) {
+        if (user instanceof Student) {
+            return updateStudentPassword((Student) user);
+        } else if (user instanceof CompanyRepresentative) {
+            return false;
+        } else if (user instanceof CareerCentreStaff) {
+            return false;
+        }
+        return false;
+    }
+
+    /**
+     * Update password for a student in the CSV file
+     */
+    private static boolean updateStudentPassword(Student student) {
+        return updatePasswordInFile("Datasets/student_list.csv", student.getUserID(), student.getPassword(), 0, 5);
+    }
+
+
+    /**
+     * Generic method to update password in any CSV file
+     *
+     * @param filePath Path to the CSV file
+     * @param userID ID of the user to update
+     * @param newPassword New password to set
+     * @param idColumnIndex Column index where userID is located (0-based)
+     * @param passwordColumnIndex Column index where password is located (0-based)
+     */
+    private static boolean updatePasswordInFile(String filePath, String userID, String newPassword,
+                                                int idColumnIndex, int passwordColumnIndex) {
+        File file = new File(filePath);
+        if (!file.exists()) {
+            System.err.println("File not found: " + filePath);
+            return false;
+        }
+
+        List<String> lines = new ArrayList<>();
+        boolean updated = false;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line = reader.readLine(); // Read header
+            if (line != null) {
+                lines.add(line);
+            }
+
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",", -1);
+
+                if (parts.length > Math.max(idColumnIndex, passwordColumnIndex) &&
+                        parts[idColumnIndex].equals(userID)) {
+                    // Update the password column
+                    parts[passwordColumnIndex] = newPassword;
+                    lines.add(String.join(",", parts));
+                    updated = true;
+                } else {
+                    lines.add(line);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
+            return false;
+        }
+
+        if (!updated) {
+            System.err.println("User not found: " + userID);
+            return false;
+        }
+
+        // Write updated content back to file
+        try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
+            for (String line : lines) {
+                writer.println(line);
+            }
+            return true;
+        } catch (IOException e) {
+            System.err.println("Error writing file: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static void StudentCSVIncludePasswords() {
+        try {
+            List<String> lines = new ArrayList<>();
+            BufferedReader reader = new BufferedReader(new FileReader("Datasets/student_list.csv"));
+
+            String header = reader.readLine();
+            // Check if password column already exists
+            if (header != null && header.toLowerCase().contains("password")) {
+                reader.close();
+                return;
+            }
+
+            // Add Password column to header
+            lines.add(header + ",Password");
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (!line.trim().isEmpty()) {
+                    // Add default password to each student
+                    lines.add(line + ",password");
+                }
+            }
+            reader.close();
+
+            // Write back to file
+            PrintWriter writer = new PrintWriter(new FileWriter("Datasets/student_list.csv"));
+            for (String l : lines) {
+                writer.println(l);
+            }
+            writer.close();
+
+        } catch (IOException e) {
+            System.err.println("Error migrating CSV: " + e.getMessage());
+        }
     }
 }

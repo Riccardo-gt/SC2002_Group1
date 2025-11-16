@@ -11,13 +11,12 @@ public abstract class User {
     private String name;
     private String email;
     private String password;
-    private static final String DEFAULT_PASSWORD = "password";
 
     public User(String userID, String name, String email, String password) {
         this.userID = userID;
         this.name = name;
         this.email = email;
-        this.password = DEFAULT_PASSWORD; // Default password = "password"
+        this.password = password; // Default password = "password"
     }
 
     public String getUserID() {
@@ -43,13 +42,25 @@ public abstract class User {
     }
 
     public void resetPassword(Scanner scanner) {
+        // 2. Input New Password
         System.out.println("Enter new password (Ensure it has at least 1 Uppercase, 1 Lowercase, 1 special character (!@#$%), and 1 number):");
-        String newPassword = scanner.nextLine().trim();
+        String newPassword = scanner.nextLine();
+
+        // 3. Validate and Update
         while (!isPasswordValid(newPassword)) {
             System.out.println("Password does not meet complexity requirements. Please re-enter a valid password:");
-            newPassword = scanner.nextLine().trim();
+            newPassword = scanner.nextLine();
         }
+
         this.password = newPassword;
+
+        // Save the password change to CSV file
+        if (FileIOHandler.updateUserPassword(this)) {
+            System.out.println("Password successfully updated and saved!");
+        } else {
+            System.out.println("Password updated in current session, but failed to save to file.");
+            System.out.println("Your password change may not persist after logout.");
+        }
     }
 
     public void changePassword(Scanner scanner) {
@@ -77,7 +88,14 @@ public abstract class User {
         }
 
         this.password = newPassword;
-        System.out.println("Password successfully updated!");
+
+        // Save the password change to CSV file
+        if (FileIOHandler.updateUserPassword(this)) {
+            System.out.println("Password successfully updated and saved!");
+        } else {
+            System.out.println("Password updated in current session, but failed to save to file.");
+            System.out.println("Your password change may not persist after logout.");
+        }
     }
     
     private boolean isPasswordValid(String password) {

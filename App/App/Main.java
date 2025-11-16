@@ -39,6 +39,7 @@ public class Main {
 
     static void loadData() {
         System.out.println("Loading system data...");
+        FileIOHandler.StudentCSVIncludePasswords();
         registerStudents();
         registerStaff();
         loadCompanyReps();
@@ -58,8 +59,8 @@ public class Main {
                     continue;
                 }
                 String[] parts = line.split(",");
-                // Format: UserID,Name,Major,Year,Email
-                Student student = new Student(parts[0], parts[1], parts[4], "password", parts[2],
+                // Format: UserID,Name,Major,Year,Email,Password
+                Student student = new Student(parts[0], parts[1], parts[4], parts[5], parts[2],
                         Integer.valueOf(parts[3]));
                 registeredAccounts.put(parts[0], student);
             }
