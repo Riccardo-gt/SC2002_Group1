@@ -152,7 +152,6 @@ public class Internship {
 
     public void toggleVisibility(boolean isVisible) {
         this.isVisible = isVisible;
-        System.out.println("Internship visibility set to: " + isVisible);
     }
 
     public void checkFilledStatus() {

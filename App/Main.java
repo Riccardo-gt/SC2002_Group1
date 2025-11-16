@@ -523,15 +523,10 @@ public class Main {
             return;
         }
 
-        System.out.println("\n=== My Internships ===");
         for (int i = 0; i < myInternships.size(); i++) {
             Internship internship = myInternships.get(i);
-            System.out.println("\n[" + (i + 1) + "] " + internship.getTitle());
-            System.out.println("    Status: " + internship.getStatus());
-            System.out.println("    Visible: " + (internship.isVisible() ? "Yes" : "No"));
-            System.out.println("    Level: " + internship.getLevel());
-            System.out.println("    Slots: " + internship.getSlots());
-            System.out.println("    Applications: " + internship.getApplications().size());
+            System.out.println("\nInternship No " + (i + 1));
+            internship.displayDetails();
         }
     }
 
@@ -988,4 +983,6 @@ public class Main {
         }
         saveAllData();
     }
+
+    
 }
