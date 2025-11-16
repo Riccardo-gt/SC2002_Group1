@@ -3,18 +3,21 @@ package Models;
 public class Application {
     private Student student;
     private Internship internship;
+
     public enum ApplicationStatus {
         PENDING,
         SUCCESSFUL,
         UNSUCCESSFUL,
         WITHDRAWN
     }
+
     public enum WithdrawalStatus {
         NOTREQUESTED,
         PENDING,
         APPROVED,
         REJECTED
     }
+
     private ApplicationStatus status; // Pending, Successful, Unsuccessful
     private WithdrawalStatus withdrawalStatus;
     private boolean confirmed;
@@ -26,7 +29,6 @@ public class Application {
         this.confirmed = false;
         this.withdrawalStatus = WithdrawalStatus.NOTREQUESTED;
     }
-    
 
     public Internship getInternship() {
         return internship;
@@ -62,11 +64,10 @@ public class Application {
 
     public void confirmAcceptance() {
         if (this.status == ApplicationStatus.SUCCESSFUL) {
-            setConfirmed(confirmed);
+            setConfirmed(true);
             System.out.println("Acceptance confirmed for: " + internship.getTitle());
         } else {
             System.out.println("Cannot confirm - application not approved");
         }
     }
 }
-

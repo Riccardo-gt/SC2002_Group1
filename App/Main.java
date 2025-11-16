@@ -51,9 +51,14 @@ public class Main {
             String line = file.readLine(); // Read the header
 
             while ((line = file.readLine()) != null) {
+                // Skip empty lines
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
                 String[] parts = line.split(",");
                 // Format: UserID,Name,Major,Year,Email
-                Student student = new Student(parts[0], parts[1], parts[4], "password", parts[2], Integer.valueOf(parts[3]));
+                Student student = new Student(parts[0], parts[1], parts[4], "password", parts[2],
+                        Integer.valueOf(parts[3]));
                 registeredAccounts.put(parts[0], student);
             }
             file.close();
@@ -69,9 +74,14 @@ public class Main {
             String line = file.readLine();
 
             while ((line = file.readLine()) != null) {
+                // Skip empty lines
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
                 String[] parts = line.split(",");
                 // Format: UserID,Name,Role,Department,Email
-                CareerCentreStaff staff = new CareerCentreStaff(parts[0], parts[1], parts[4], "password", parts[2], parts[3]);
+                CareerCentreStaff staff = new CareerCentreStaff(parts[0], parts[1], parts[4], "password", parts[2],
+                        parts[3]);
                 registeredAccounts.put(parts[0], staff);
             }
             file.close();
@@ -184,8 +194,7 @@ public class Main {
         String position = scanner.nextLine().trim();
 
         CompanyRepresentative rep = new CompanyRepresentative(
-                email, name, email, password, company, position, department, "PENDING"
-        );
+                email, name, email, password, company, position, department, "PENDING");
 
         pendingCompanyReps.add(rep);
         saveAllData();
@@ -258,6 +267,7 @@ public class Main {
                 .filter(i -> i.isAcceptingApplications())
                 .filter(i -> student.isEligibleForLevel(i.getLevel()))
                 .filter(i -> student.matchesMajor(i.getPreferredMajor()))
+                .sorted((i1, i2) -> i1.getTitle().compareToIgnoreCase(i2.getTitle()))
                 .collect(Collectors.toList());
 
         if (available.isEmpty()) {
@@ -269,8 +279,9 @@ public class Main {
         for (int i = 0; i < available.size(); i++) {
             Internship internship = available.get(i);
             System.out.println("\n[" + (i + 1) + "] " + internship.getTitle());
-            System.out.println("    Company: " + (internship.getCompanyRepresentative() != null ?
-                    internship.getCompanyRepresentative().getCompanyName() : "N/A"));
+            System.out.println("    Company: " + (internship.getCompanyRepresentative() != null
+                    ? internship.getCompanyRepresentative().getCompanyName()
+                    : "N/A"));
             System.out.println("    Level: " + internship.getLevel());
             System.out.println("    Preferred Major: " + internship.getPreferredMajor());
             System.out.println("    Description: " + internship.getDescription());
@@ -285,7 +296,8 @@ public class Main {
                 .filter(i -> student.isEligibleForLevel(i.getLevel()))
                 .filter(i -> student.matchesMajor(i.getPreferredMajor()))
                 .filter(i -> i.getApplications().stream()
-                        .noneMatch(app -> app.getStudent().equals(student)))  // not already applied
+                        .noneMatch(app -> app.getStudent().equals(student))) // not already applied
+                .sorted((i1, i2) -> i1.getTitle().compareToIgnoreCase(i2.getTitle()))
                 .collect(Collectors.toList());
 
         if (available.isEmpty()) {
@@ -297,8 +309,9 @@ public class Main {
         for (int i = 0; i < available.size(); i++) {
             Internship internship = available.get(i);
             System.out.println("\n[" + (i + 1) + "] " + internship.getTitle());
-            System.out.println("    Company: " + (internship.getCompanyRepresentative() != null ?
-                    internship.getCompanyRepresentative().getCompanyName() : "N/A"));
+            System.out.println("    Company: " + (internship.getCompanyRepresentative() != null
+                    ? internship.getCompanyRepresentative().getCompanyName()
+                    : "N/A"));
             System.out.println("    Level: " + internship.getLevel());
             System.out.println("    Preferred Major: " + internship.getPreferredMajor());
             System.out.println("    Description: " + internship.getDescription());
@@ -310,7 +323,8 @@ public class Main {
 
         try {
             int choice = Integer.parseInt(scanner.nextLine().trim());
-            if (choice == 0) return;
+            if (choice == 0)
+                return;
             if (choice < 1 || choice > available.size()) {
                 System.out.println("Invalid selection.");
                 return;
@@ -336,7 +350,7 @@ public class Main {
 
         List<Application> approved = student.getApplications().stream()
                 .filter(app -> app.getStatus() == Application.ApplicationStatus.SUCCESSFUL)
-                .filter(app -> !app.isConfirmed())  
+                .filter(app -> !app.isConfirmed())
                 .collect(Collectors.toList());
 
         if (approved.isEmpty()) {
@@ -353,7 +367,8 @@ public class Main {
         System.out.print("\nEnter number to accept (0 to cancel): ");
         try {
             int choice = Integer.parseInt(scanner.nextLine().trim());
-            if (choice == 0) return;
+            if (choice == 0)
+                return;
             if (choice < 1 || choice > approved.size()) {
                 System.out.println("Invalid selection.");
                 return;
@@ -378,7 +393,8 @@ public class Main {
 
         try {
             int choice = Integer.parseInt(scanner.nextLine().trim());
-            if (choice == 0) return;
+            if (choice == 0)
+                return;
             if (choice < 1 || choice > student.getApplications().size()) {
                 System.out.println("Invalid selection.");
                 return;
@@ -473,6 +489,12 @@ public class Main {
             LocalDate closeDate = LocalDate.parse(closeDateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             int slots = Integer.parseInt(slotsStr);
 
+            // Validate slots (max 10)
+            if (slots <= 0 || slots > 10) {
+                System.out.println("Error: Number of slots must be between 1 and 10.");
+                return;
+            }
+
             Internship internship = new Internship(title, description, level, major,
                     openDate, closeDate, slots, rep);
             rep.createInternshipOpportunity(internship);
@@ -517,7 +539,8 @@ public class Main {
 
         try {
             int choice = Integer.parseInt(scanner.nextLine().trim());
-            if (choice == 0) return;
+            if (choice == 0)
+                return;
             if (choice < 1 || choice > myInternships.size()) {
                 System.out.println("Invalid selection.");
                 return;
@@ -536,11 +559,13 @@ public class Main {
             System.out.println("\n=== Edit Internship ===");
             System.out.print("New Title (press Enter to keep current): ");
             String title = scanner.nextLine().trim();
-            if (!title.isEmpty()) internship.setTitle(title);
+            if (!title.isEmpty())
+                internship.setTitle(title);
 
             System.out.print("New Description (press Enter to keep current): ");
             String desc = scanner.nextLine().trim();
-            if (!desc.isEmpty()) internship.setDescription(desc);
+            if (!desc.isEmpty())
+                internship.setDescription(desc);
 
             saveAllData();
             System.out.println("\nInternship updated.");
@@ -562,7 +587,8 @@ public class Main {
 
         try {
             int choice = Integer.parseInt(scanner.nextLine().trim());
-            if (choice == 0) return;
+            if (choice == 0)
+                return;
             if (choice < 1 || choice > myInternships.size()) {
                 System.out.println("Invalid selection.");
                 return;
@@ -611,10 +637,11 @@ public class Main {
 
             System.out.print("\nEnter application number to manage (0 to cancel): ");
             int appChoice = Integer.parseInt(scanner.nextLine().trim());
-            if (appChoice == 0) return;
+            if (appChoice == 0)
+                return;
 
             List<Application> rankedApps = viewer.getRankedApplicants();
-                  if (rankedApps == null || rankedApps.isEmpty()) {
+            if (rankedApps == null || rankedApps.isEmpty()) {
                 System.out.println("No applications available to manage.");
                 return;
             }
@@ -630,13 +657,14 @@ public class Main {
 
             if (action.equals("A")) {
                 viewer.approveApplication(application);
-                // Handle withdrawn / withdrawal pending applications 
+                // Handle withdrawn / withdrawal pending applications
                 if (application.getStatus() == Application.ApplicationStatus.WITHDRAWN) {
                     System.out.println("\nThis application has already been withdrawn and cannot be managed.");
                     return;
                 }
                 if (application.getWithdrawalStatus() == Application.WithdrawalStatus.PENDING) {
-                    System.out.println("\nStudent has requested withdrawal for this application. Staff must process withdrawal requests.");
+                    System.out.println(
+                            "\nStudent has requested withdrawal for this application. Staff must process withdrawal requests.");
                     return;
                 }
             } else if (action.equals("R")) {
@@ -666,7 +694,8 @@ public class Main {
 
         try {
             int choice = Integer.parseInt(scanner.nextLine().trim());
-            if (choice == 0) return;
+            if (choice == 0)
+                return;
             if (choice < 1 || choice > myInternships.size()) {
                 System.out.println("Invalid selection.");
                 return;
@@ -745,7 +774,8 @@ public class Main {
         System.out.print("\nEnter number to authorize (0 to cancel): ");
         try {
             int choice = Integer.parseInt(scanner.nextLine().trim());
-            if (choice == 0) return;
+            if (choice == 0)
+                return;
             if (choice < 1 || choice > pendingCompanyReps.size()) {
                 System.out.println("Invalid selection.");
                 return;
@@ -786,14 +816,17 @@ public class Main {
         for (int i = 0; i < pending.size(); i++) {
             Internship internship = pending.get(i);
             System.out.println((i + 1) + ". " + internship.getTitle() +
-                    " - " + (internship.getCompanyRepresentative() != null ?
-                    internship.getCompanyRepresentative().getCompanyName() : "N/A"));
+                    " - "
+                    + (internship.getCompanyRepresentative() != null
+                            ? internship.getCompanyRepresentative().getCompanyName()
+                            : "N/A"));
         }
 
         System.out.print("\nEnter number to manage (0 to cancel): ");
         try {
             int choice = Integer.parseInt(scanner.nextLine().trim());
-            if (choice == 0) return;
+            if (choice == 0)
+                return;
             if (choice < 1 || choice > pending.size()) {
                 System.out.println("Invalid selection.");
                 return;
@@ -842,7 +875,8 @@ public class Main {
         System.out.print("\nSelect request number to process (0 to cancel): ");
         try {
             int sel = Integer.parseInt(scanner.nextLine().trim());
-            if (sel == 0) return;
+            if (sel == 0)
+                return;
             if (sel < 1 || sel > pending.size()) {
                 System.out.println("Invalid selection.");
                 return;
@@ -869,7 +903,8 @@ public class Main {
                 return;
             }
 
-            // If approving a withdrawal may free a slot or affect internship state, handle here.
+            // If approving a withdrawal may free a slot or affect internship state, handle
+            // here.
             saveAllData();
 
         } catch (NumberFormatException e) {
@@ -880,34 +915,42 @@ public class Main {
     static void generateReports(CareerCentreStaff staff) {
         System.out.println("\n=== Generate Report ===");
         System.out.println("1. All Internships");
-        System.out.println("2. Filter by Status");
-        System.out.println("3. Filter by Level");
+        System.out.println("2. Filter by Status (Approved/Pending/Rejected/Filled)");
+        System.out.println("3. Filter by Level (Basic/Intermediate/Advanced)");
         System.out.println("4. Filter by Major");
-        System.out.print("Select filter: ");
+        System.out.print("Select option: ");
 
         int choice = Integer.parseInt(scanner.nextLine().trim());
-        String filter = "";
+        String filterType = "";
+        String filterValue = "";
 
         switch (choice) {
             case 1:
-                filter = "";
+                filterType = "";
+                filterValue = "";
                 break;
             case 2:
-                filter = "Approved";
+                System.out.print("Enter status (Approved/Pending/Rejected/Filled): ");
+                filterType = "status";
+                filterValue = scanner.nextLine().trim();
                 break;
             case 3:
-                filter = "Pending";
+                System.out.print("Enter level (Basic/Intermediate/Advanced): ");
+                filterType = "level";
+                filterValue = scanner.nextLine().trim();
                 break;
             case 4:
-                filter = "Rejected";
+                System.out.print("Enter major: ");
+                filterType = "major";
+                filterValue = scanner.nextLine().trim();
                 break;
             default:
                 System.out.println("Invalid choice.");
                 return;
         }
 
-        staff.generateReport(allInternships, filter);
-        
+        staff.generateReport(allInternships, filterType, filterValue);
+
     }
 
     static void viewAllInternships() {

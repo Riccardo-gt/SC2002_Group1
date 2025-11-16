@@ -64,14 +64,24 @@ public class CareerCentreStaff extends User {
         return true;
     }
 
-    public void generateReport(List<Internship> allInternships, String filter) {
+    public void generateReport(List<Internship> allInternships, String filterType, String filterValue) {
         System.out.println("=== Career Centre Report ===");
-        
+
         List<Internship> filtered = allInternships;
-        if (filter != null && !filter.isEmpty()) {
-            filtered = allInternships.stream()
-                    .filter(i -> i.getStatus().equalsIgnoreCase(filter))
-                    .collect(Collectors.toList());
+        if (filterType != null && !filterType.isEmpty()) {
+            if (filterType.equals("status")) {
+                filtered = allInternships.stream()
+                        .filter(i -> i.getStatus().equalsIgnoreCase(filterValue))
+                        .collect(Collectors.toList());
+            } else if (filterType.equals("level")) {
+                filtered = allInternships.stream()
+                        .filter(i -> i.getLevel().equalsIgnoreCase(filterValue))
+                        .collect(Collectors.toList());
+            } else if (filterType.equals("major")) {
+                filtered = allInternships.stream()
+                        .filter(i -> i.getPreferredMajor().equalsIgnoreCase(filterValue))
+                        .collect(Collectors.toList());
+            }
         }
 
         int totalInternships = allInternships.size();

@@ -1,1 +1,2 @@
 internshipID,title,description,level,preferredMajor,openingDate,closingDate,status,isVisible,companyRepID,slots
+1,swe,sweintern,Basic,Computer Science,2026-03-03,2026-05-05,Pending,true,as,10

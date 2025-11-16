@@ -13,7 +13,7 @@ public class ApplicationViewer {
         this.applications = new ArrayList<>(internship.getApplications());
     }
 
-     public List<Application> getRankedApplicants() {
+    public List<Application> getRankedApplicants() {
         return rankedApplicants;
     }
 
@@ -21,11 +21,11 @@ public class ApplicationViewer {
     public void displayApplicants() {
         System.out.println("=== Applicants for: " + currentInternship.getTitle() + " ===");
         List<Application> activeApplications = applications.stream()
-            .filter(app -> app.getStatus() != Application.ApplicationStatus.WITHDRAWN)
-            .collect(Collectors.toList());
-        
+                .filter(app -> app.getStatus() != Application.ApplicationStatus.WITHDRAWN)
+                .collect(Collectors.toList());
+
         System.out.println("Total Applications: " + applications.size());
-        
+
         if (applications.isEmpty()) {
             System.out.println("No applications received yet.");
             return;
@@ -34,8 +34,8 @@ public class ApplicationViewer {
         int counter = 1;
         for (Application application : applications) {
             Student student = application.getStudent();
-            System.out.println(counter + ". " + student.getName() + 
-                             " | Status: " + application.getStatus());
+            System.out.println(counter + ". " + student.getName() +
+                    " | Status: " + application.getStatus());
             counter++;
         }
     }
@@ -47,13 +47,13 @@ public class ApplicationViewer {
         List<Application> activeApplications = applications.stream()
                 .filter(app -> app.getStatus() != Application.ApplicationStatus.WITHDRAWN && !app.isConfirmed())
                 .collect(Collectors.toList());
-        
+
         if (activeApplications.isEmpty()) {
             System.out.println("No active applications.");
-            this.rankedApplicants = new ArrayList<>();  // Initialize empty list
+            this.rankedApplicants = new ArrayList<>(); // Initialize empty list
             return;
         }
-        
+
         this.rankedApplicants = applications.stream()
                 .sorted((a1, a2) -> Integer.compare(
                         calculateApplicantScore(a2), calculateApplicantScore(a1)))
@@ -64,12 +64,12 @@ public class ApplicationViewer {
             Student student = app.getStudent();
             int score = calculateApplicantScore(app);
             System.out.println(rank + ". " + student.getName() +
-                               " | Score: " + score +
-                               " | Status: " + app.getStatus() +
-                               " | CGPA: " + student.getCGPA() +
-                               " | Major: " + student.getMajor() +
-                               " | Year: " + student.getYearOfStudy() +
-                            " | Withdrawal: " + app.getWithdrawalStatus());
+                    " | Score: " + score +
+                    " | Status: " + app.getStatus() +
+                    " | CGPA: " + student.getCGPA() +
+                    " | Major: " + student.getMajor() +
+                    " | Year: " + student.getYearOfStudy() +
+                    " | Withdrawal: " + app.getWithdrawalStatus());
             rank++;
         }
     }
@@ -79,7 +79,7 @@ public class ApplicationViewer {
         int score = 0;
 
         // Higher GPA = better score
-        score += (int)(s.getCGPA() * 10);
+        score += (int) (s.getCGPA() * 10);
 
         // Match preferred major
         if (s.getMajor().equalsIgnoreCase(currentInternship.getPreferredMajor())) {
@@ -126,7 +126,7 @@ public class ApplicationViewer {
         }
 
         if (application.getStatus() == Application.ApplicationStatus.UNSUCCESSFUL) {
-            System.out.println("Application is already unsucessful.");
+            System.out.println("Application is already unsuccessful.");
             return true;
         }
 

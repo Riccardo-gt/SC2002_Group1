@@ -157,14 +157,14 @@ public class Internship {
 
     public void checkFilledStatus() {
         if (slots > 0) {
-            long acceptedCount = applications.stream()
-                .filter(app -> app.getStatus() == Application.ApplicationStatus.SUCCESSFUL)
+            long confirmedCount = applications.stream()
+                .filter(app -> app.isConfirmed())
                 .count();
-            
-            if (acceptedCount >= slots && !"Filled".equals(status)) {
+
+            if (confirmedCount >= slots && !"Filled".equals(status)) {
                 this.status = "Filled";
                 System.out.println("Internship '" + title + "' is now filled.");
-            } else if (acceptedCount < slots && "Filled".equals(status)) {
+            } else if (confirmedCount < slots && "Filled".equals(status)) {
                 this.status = "Approved";
             }
         }

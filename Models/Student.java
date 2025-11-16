@@ -94,6 +94,14 @@ public class Student extends User {
             return false;
         }
 
+        // Check for duplicate application
+        boolean alreadyApplied = applications.stream()
+                .anyMatch(app -> app.getInternship().equals(internship));
+        if (alreadyApplied) {
+            System.out.println("Error: You have already applied for this internship.");
+            return false;
+        }
+
         // Create and submit application
         Application application = new Application(this, internship);
         internship.addApplication(application);

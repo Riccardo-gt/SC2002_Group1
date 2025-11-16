@@ -7,7 +7,8 @@ import java.util.*;
 
 /**
  * Handles all file I/O operations for the system using CSV format only.
- * Manages persistence for internships, applications, and company representatives.
+ * Manages persistence for internships, applications, and company
+ * representatives.
  */
 public class FileIOHandler {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -21,12 +22,14 @@ public class FileIOHandler {
 
     /**
      * Save all internships to CSV file
-     * Format: internshipID,title,description,level,preferredMajor,openingDate,closingDate,status,isVisible,companyRepID,slots
+     * Format:
+     * internshipID,title,description,level,preferredMajor,openingDate,closingDate,status,isVisible,companyRepID,slots
      */
     public static void saveInternships(List<Internship> internships, HashMap<String, User> users) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(INTERNSHIPS_FILE))) {
             // Write header
-            writer.println("internshipID,title,description,level,preferredMajor,openingDate,closingDate,status,isVisible,companyRepID,slots");
+            writer.println(
+                    "internshipID,title,description,level,preferredMajor,openingDate,closingDate,status,isVisible,companyRepID,slots");
 
             int id = 1;
             for (Internship internship : internships) {
@@ -42,8 +45,7 @@ public class FileIOHandler {
                         internship.getStatus(),
                         internship.isVisible(),
                         rep != null ? rep.getUserID() : "",
-                        internship.getSlots()
-                );
+                        internship.getSlots());
             }
         } catch (IOException e) {
             System.err.println("Error saving internships: " + e.getMessage());
@@ -66,7 +68,8 @@ public class FileIOHandler {
 
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",", -1); // -1 to keep empty strings
-                if (parts.length < 11) continue;
+                if (parts.length < 11)
+                    continue;
 
                 try {
                     Internship internship = new Internship();
@@ -121,13 +124,13 @@ public class FileIOHandler {
             int internshipID = 1;
             for (Internship internship : internships) {
                 for (Application application : internship.getApplications()) {
-                    writer.printf("%d,%s,%d,%s,%s%n",
+                    writer.printf("%d,%s,%d,%s,%s,%b%n",
                             appID++,
                             application.getStudent().getUserID(),
                             internshipID,
                             application.getStatus().toString(),
                             application.getWithdrawalStatus().toString(),
-                            false // confirmed field from Application class
+                            application.isConfirmed()
                     );
                 }
                 internshipID++;
@@ -151,8 +154,9 @@ public class FileIOHandler {
             String line = reader.readLine(); // Skip header
 
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",",-1);
-                if (parts.length < 4) continue;
+                String[] parts = line.split(",", -1);
+                if (parts.length < 4)
+                    continue;
 
                 try {
                     String studentID = parts[1];
@@ -160,11 +164,14 @@ public class FileIOHandler {
                     String status = parts[3];
                     String withdrawalStr = parts.length >= 5 ? parts[4] : "";
 
-                    if (internshipID < 0 || internshipID >= internships.size()) continue;
-                    if (!users.containsKey(studentID)) continue;
+                    if (internshipID < 0 || internshipID >= internships.size())
+                        continue;
+                    if (!users.containsKey(studentID))
+                        continue;
 
                     User user = users.get(studentID);
-                    if (!(user instanceof Student)) continue;
+                    if (!(user instanceof Student))
+                        continue;
 
                     Student student = (Student) user;
                     Internship internship = internships.get(internshipID);
@@ -204,8 +211,7 @@ public class FileIOHandler {
                         escapeCSV(rep.getCompanyName()),
                         escapeCSV(rep.getPosition()),
                         escapeCSV(rep.getDepartment()),
-                        rep.getStatus()
-                );
+                        rep.getStatus());
             }
         } catch (IOException e) {
             System.err.println("Error saving company representatives: " + e.getMessage());
@@ -228,7 +234,8 @@ public class FileIOHandler {
 
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length < 8) continue;
+                if (parts.length < 8)
+                    continue;
 
                 try {
                     CompanyRepresentative rep = new CompanyRepresentative(
@@ -239,7 +246,7 @@ public class FileIOHandler {
                             unescapeCSV(parts[4]), // companyName
                             unescapeCSV(parts[5]), // position
                             unescapeCSV(parts[6]), // department
-                            parts[7]  // status
+                            parts[7] // status
                     );
                     reps.add(rep);
                 } catch (Exception e) {
@@ -259,7 +266,8 @@ public class FileIOHandler {
      * Escape CSV special characters
      */
     private static String escapeCSV(String value) {
-        if (value == null) return "";
+        if (value == null)
+            return "";
         if (value.contains(",") || value.contains("\"") || value.contains("\n")) {
             return "\"" + value.replace("\"", "\"\"") + "\"";
         }
@@ -270,7 +278,8 @@ public class FileIOHandler {
      * Unescape CSV special characters
      */
     private static String unescapeCSV(String value) {
-        if (value == null) return "";
+        if (value == null)
+            return "";
         if (value.startsWith("\"") && value.endsWith("\"")) {
             return value.substring(1, value.length() - 1).replace("\"\"", "\"");
         }
@@ -281,8 +290,8 @@ public class FileIOHandler {
      * Save all data at once
      */
     public static void saveAllData(List<Internship> internships,
-                                   List<CompanyRepresentative> reps,
-                                   HashMap<String, User> users) {
+            List<CompanyRepresentative> reps,
+            HashMap<String, User> users) {
         saveInternships(internships, users);
         saveApplications(internships);
         saveCompanyReps(reps);
