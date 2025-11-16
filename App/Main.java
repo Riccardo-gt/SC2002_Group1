@@ -914,43 +914,48 @@ public class Main {
 
     static void generateReports(CareerCentreStaff staff) {
         System.out.println("\n=== Generate Report ===");
-        System.out.println("1. All Internships");
-        System.out.println("2. Filter by Status (Approved/Pending/Rejected/Filled)");
-        System.out.println("3. Filter by Level (Basic/Intermediate/Advanced)");
-        System.out.println("4. Filter by Major");
-        System.out.print("Select option: ");
+        System.out.println("1. Filter by Status");
+        System.out.println("2. Filter by Level");
+        System.out.println("3. Filter by Preferred Major");
+        System.out.print("Select filter: ");
 
-        int choice = Integer.parseInt(scanner.nextLine().trim());
-        String filterType = "";
-        String filterValue = "";
+        int choice = Integer.parseInt(scanner.nextLine().trim()), filterType;
+        String filter;
 
         switch (choice) {
             case 1:
-                filterType = "";
-                filterValue = "";
+                System.out.println("Please enter 1 of the following (Pending / Approved / Rejected / Filled)");
+                filter = scanner.nextLine().trim().toLowerCase(); // Use nextLine() for consistency
+                if (!filter.equals("pending") &&
+                        !filter.equals("approved") &&
+                        !filter.equals("rejected") &&
+                        !filter.equals("filled")) {
+
+                    System.out.println("Invalid status!");
+                    return;
+                }
+                filterType = 1;
                 break;
             case 2:
-                System.out.print("Enter status (Approved/Pending/Rejected/Filled): ");
-                filterType = "status";
-                filterValue = scanner.nextLine().trim();
+                System.out.println("Please enter 1 of the following (Basic / Intermediate / Advanced)");
+                filter = scanner.nextLine().trim().toLowerCase(); 
+                if (!filter.equals("basic") && !filter.equals("intermediate") && !filter.equals("advanced")) {
+                    System.out.println("Invalid level!");
+                    return;
+                }
+                filterType = 2;
                 break;
             case 3:
-                System.out.print("Enter level (Basic/Intermediate/Advanced): ");
-                filterType = "level";
-                filterValue = scanner.nextLine().trim();
-                break;
-            case 4:
-                System.out.print("Enter major: ");
-                filterType = "major";
-                filterValue = scanner.nextLine().trim();
+                System.out.println("Please enter the major");
+                filter = scanner.nextLine().trim().toLowerCase(); // Use nextLine() for possible multi-word majors
+                filterType = 3;
                 break;
             default:
                 System.out.println("Invalid choice.");
                 return;
         }
 
-        staff.generateReport(allInternships, filterType, filterValue);
-
+        staff.generateReport(allInternships, filter, filterType);
     }
 
     static void viewAllInternships() {
