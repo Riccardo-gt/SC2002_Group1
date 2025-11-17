@@ -25,7 +25,7 @@ public class Main {
 
         // Load all data
         loadData();
-
+        System.out.println("registered accounts = " + registeredAccounts);
         // App.Main application loop
         while (true) {
             if (currentUser == null) {
@@ -41,6 +41,8 @@ public class Main {
     static void loadData() {
         System.out.println("Loading system data...");
         FileIOHandler.StudentCSVIncludePasswords();
+        FileIOHandler.StaffCSVIncludePasswords();
+        FileIOHandler.CompanyRepCSVIncludePasswords();
         registerStudents();
         registerStaff();
         loadCompanyReps();
@@ -83,8 +85,8 @@ public class Main {
                     continue;
                 }
                 String[] parts = line.split(",");
-                // Format: UserID,Name,Role,Department,Email
-                CareerCentreStaff staff = new CareerCentreStaff(parts[0], parts[1], parts[4], "password", parts[2],
+                // Format: UserID,Name,Role,Department,Email,Password
+                CareerCentreStaff staff = new CareerCentreStaff(parts[0], parts[1], parts[4], parts[5], parts[2],
                         parts[3]);
                 registeredAccounts.put(parts[0], staff);
             }

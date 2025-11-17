@@ -134,8 +134,7 @@ public class FileIOHandler {
                             internshipID,
                             application.getStatus().toString(),
                             application.getWithdrawalStatus().toString(),
-                            application.isConfirmed()
-                    );
+                            application.isConfirmed());
                 }
                 internshipID++;
             }
@@ -294,8 +293,8 @@ public class FileIOHandler {
      * Save all data at once
      */
     public static void saveAllData(List<Internship> internships,
-                                   List<CompanyRepresentative> reps,
-                                   HashMap<String, User> users) {
+            List<CompanyRepresentative> reps,
+            HashMap<String, User> users) {
         saveInternships(internships, users);
         saveApplications(internships);
         saveCompanyReps(reps);
@@ -310,9 +309,9 @@ public class FileIOHandler {
         if (user instanceof Student) {
             return updateStudentPassword((Student) user);
         } else if (user instanceof CompanyRepresentative) {
-            return false;
+            return updateCompanyRepPassword((CompanyRepresentative) user);
         } else if (user instanceof CareerCentreStaff) {
-            return false;
+            return updateStaffPassword((CareerCentreStaff) user);
         }
         return false;
     }
@@ -324,18 +323,25 @@ public class FileIOHandler {
         return updatePasswordInFile("Datasets/student_list.csv", student.getUserID(), student.getPassword(), 0, 5);
     }
 
+    private static boolean updateCompanyRepPassword(CompanyRepresentative rep) {
+        return updatePasswordInFile("Datasets/company_reps.csv", rep.getUserID(), rep.getPassword(), 0, 3);
+    }
+
+    private static boolean updateStaffPassword(CareerCentreStaff staff) {
+        return updatePasswordInFile("Datasets/staff_list.csv", staff.getUserID(), staff.getPassword(), 0, 5);
+    }
 
     /**
      * Generic method to update password in any CSV file
      *
-     * @param filePath Path to the CSV file
-     * @param userID ID of the user to update
-     * @param newPassword New password to set
-     * @param idColumnIndex Column index where userID is located (0-based)
+     * @param filePath            Path to the CSV file
+     * @param userID              ID of the user to update
+     * @param newPassword         New password to set
+     * @param idColumnIndex       Column index where userID is located (0-based)
      * @param passwordColumnIndex Column index where password is located (0-based)
      */
     private static boolean updatePasswordInFile(String filePath, String userID, String newPassword,
-                                                int idColumnIndex, int passwordColumnIndex) {
+            int idColumnIndex, int passwordColumnIndex) {
         File file = new File(filePath);
         if (!file.exists()) {
             System.err.println("File not found: " + filePath);
@@ -355,7 +361,7 @@ public class FileIOHandler {
                 String[] parts = line.split(",", -1);
 
                 if (parts.length > Math.max(idColumnIndex, passwordColumnIndex) &&
-                        parts[idColumnIndex].equals(userID)) {
+                        parts[idColumnIndex].trim().equals(userID)) {
                     // Update the password column
                     parts[passwordColumnIndex] = newPassword;
                     lines.add(String.join(",", parts));
@@ -386,39 +392,77 @@ public class FileIOHandler {
         }
     }
 
+    /**
+     * Migration method: Adds a default password column to the student_list.csv if
+     * missing.
+     */
     public static void StudentCSVIncludePasswords() {
-        try {
-            List<String> lines = new ArrayList<>();
-            BufferedReader reader = new BufferedReader(new FileReader("Datasets/student_list.csv"));
+        migratePasswordColumn("Datasets/student_list.csv");
+    }
 
-            String header = reader.readLine();
-            // Check if password column already exists
-            if (header != null && header.toLowerCase().contains("password")) {
-                reader.close();
+    /**
+     * Migration method: Adds a default password column to the staff_list.csv if
+     * missing.
+     */
+    public static void StaffCSVIncludePasswords() {
+        migratePasswordColumn("Datasets/staff_list.csv");
+    }
+
+    /**
+     * Migration method: Adds a default password column to the company_reps.csv if
+     * missing.
+     */
+    public static void CompanyRepCSVIncludePasswords() {
+        // You can use the INTERNSHIPS_FILE constant if you defined it earlier,
+        // but using the direct path here keeps it consistent with the others.
+        migratePasswordColumn("Datasets/company_reps.csv");
+    }
+
+    /**
+     * Generic utility to migrate any user CSV file to include a default password
+     * column.
+     * This function contains the actual I/O and migration logic.
+     */
+    private static void migratePasswordColumn(String filePath) {
+        try {
+            File file = new File(filePath);
+            if (!file.exists()) {
+                System.err.println("Migration failed: File not found at " + filePath);
                 return;
             }
 
-            // Add Password column to header
-            lines.add(header + ",Password");
+            List<String> lines = new ArrayList<>();
+            // Using try-with-resources for automatic resource closing
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                String header = reader.readLine();
 
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (!line.trim().isEmpty()) {
-                    // Add default password to each student
-                    lines.add(line + ",password");
+                // Check if password column already exists (case-insensitive check for
+                // "password")
+                if (header != null && header.toLowerCase().contains("password")) {
+                    return; // Migration is not needed
                 }
-            }
-            reader.close();
 
-            // Write back to file
-            PrintWriter writer = new PrintWriter(new FileWriter("Datasets/student_list.csv"));
-            for (String l : lines) {
-                writer.println(l);
-            }
-            writer.close();
+                // 1. Add Password column to header
+                lines.add(header + ",Password");
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (!line.trim().isEmpty()) {
+                        // 2. Add default password to each user record
+                        lines.add(line + ",password");
+                    }
+                }
+            } // reader automatically closed here
+
+            // Write updated content back to file
+            try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
+                for (String l : lines) {
+                    writer.println(l);
+                }
+            } // writer automatically closed here
 
         } catch (IOException e) {
-            System.err.println("Error migrating CSV: " + e.getMessage());
+            System.err.println("Error migrating CSV for " + filePath + ": " + e.getMessage());
         }
     }
 }
