@@ -64,35 +64,57 @@ public class CareerCentreStaff extends User {
         return true;
     }
     
-    public void generateReport(List<Internship> allInternships, String filter, int filterType) {
-        System.out.println("=== Career Centre Report ===");
-        List<Internship> filtered = allInternships;
-        switch (filterType) {
-            case 1:
-                if (filter != null && !filter.isEmpty()) {
-                    filtered = allInternships.stream()
-                            .filter(i -> i.getStatus().equalsIgnoreCase(filter))
-                            .collect(Collectors.toList());
-                }
-                System.out.println("Total Internships with status = " + filter + " is " + filtered.size());
-                break;
-            case 2:
-                if (filter != null && !filter.isEmpty()) {
-                    filtered = allInternships.stream()
-                            .filter(i -> i.getLevel().equalsIgnoreCase(filter))
-                            .collect(Collectors.toList());
-                }
-                System.out.println("Total Internships with level = " + filter + " is " + filtered.size());
-                break;
-            case 3:
-                if (filter != null && !filter.isEmpty()) {
-                    filtered = allInternships.stream()
-                            .filter(i -> i.getPreferredMajor().equalsIgnoreCase(filter))
-                            .collect(Collectors.toList());
-                }
-                System.out.println("Total Internships with preferred major = " + filter + " is " + filtered.size());
-                break;
+public void generateReport(List<Internship> allInternships, String filter, int filterType) {
+    System.out.println("=== Career Centre Report ===");
+    List<Internship> filtered = allInternships;
+    
+    switch (filterType) {
+        case 1: // Filter by Status
+            if (filter != null && !filter.isEmpty()) {
+                filtered = allInternships.stream()
+                        .filter(i -> i.getStatus().equalsIgnoreCase(filter))
+                        .collect(Collectors.toList());
+            }
+            System.out.println("Total Internships with status = " + filter + " is " + filtered.size());
+            break;
+        case 2: // Filter by Level
+            if (filter != null && !filter.isEmpty()) {
+                filtered = allInternships.stream()
+                        .filter(i -> i.getLevel().equalsIgnoreCase(filter))
+                        .collect(Collectors.toList());
+            }
+            System.out.println("Total Internships with level = " + filter + " is " + filtered.size());
+            break;
+        case 3: // Filter by Preferred Major
+            if (filter != null && !filter.isEmpty()) {
+                filtered = allInternships.stream()
+                        .filter(i -> i.getPreferredMajor().equalsIgnoreCase(filter))
+                        .collect(Collectors.toList());
+            }
+            System.out.println("Total Internships with preferred major = " + filter + " is " + filtered.size());
+            break;
+    }
+    
+    
+    if (filtered.isEmpty()) {
+        System.out.println("No internships match the selected filter.");
+    } else {
+        System.out.println("\n=== Matching Internships ===");
+        for (int i = 0; i < filtered.size(); i++) {
+            Internship internship = filtered.get(i);
+            System.out.println("\n[" + (i + 1) + "] " + internship.getTitle());
+            System.out.println("    Company: " + (internship.getCompanyRepresentative() != null 
+                    ? internship.getCompanyRepresentative().getCompanyName() 
+                    : "N/A"));
+            System.out.println("    Level: " + internship.getLevel());
+            System.out.println("    Preferred Major: " + internship.getPreferredMajor());
+            System.out.println("    Status: " + internship.getStatus());
+            System.out.println("    Visible: " + (internship.isVisible() ? "Yes" : "No"));
+            System.out.println("    Period: " + internship.getOpeningDate() + " to " + internship.getClosingDate());
+            System.out.println("    Slots: " + internship.getSlots());
+            System.out.println("    Applications: " + internship.getApplications().size());
         }
     }
+}
 
 }
