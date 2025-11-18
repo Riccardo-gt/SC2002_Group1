@@ -92,6 +92,10 @@ public class MainMenu {
         String name = scanner.nextLine().trim();
         System.out.print("Password: ");
         String password = scanner.nextLine();
+        while (User.isPasswordValid(password) == false) {
+            System.out.println("Password does not meet complexity requirements. Please re-enter a valid password:");
+            password = scanner.nextLine();
+        }
         System.out.print("Company Name: ");
         String company = scanner.nextLine().trim();
         System.out.print("Department: ");

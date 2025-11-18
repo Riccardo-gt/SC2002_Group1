@@ -100,7 +100,7 @@ public abstract class User {
         }
     }
     
-    private boolean isPasswordValid(String password) {
+    public static boolean isPasswordValid(String password) {
         final int LENGTH = password.length();
         boolean foundLower = false, foundUpper = false, foundSpecial = false, foundNumber = false;
         final HashSet<Character> SPECIAL = new HashSet<Character>(Arrays.asList('!', '@', '#', '$', '%'));
