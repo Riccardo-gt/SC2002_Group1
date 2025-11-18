@@ -19,14 +19,6 @@ public class Student extends User {
         applications = new ArrayList<Application>();
     }
 
-    public Student(String userId, String name, String email, String password, String major, int studyYear) {
-        super(userId, name, email, password);
-        this.major = major;
-        this.studyYear = studyYear;
-        this.cgpa = 0.0f; // Default value
-        applications = new ArrayList<Application>();
-    }
-
     public String getMajor() {
         return this.major;
     }
