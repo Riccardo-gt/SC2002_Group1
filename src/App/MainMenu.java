@@ -5,14 +5,36 @@ import Models.Utility_Classes.*;
 import java.util.*;
 
 /**
- * Handles main menu operations (login and registration)
- * Single Responsibility: Main menu display and initial user actions
+ * Handles main menu operations including login and company representative registration.
+ * This class follows the Single Responsibility Principle by focusing solely on
+ * main menu display and initial user authentication actions.
+ *
+ * <p>The main menu provides three primary functions:</p>
+ * <ul>
+ *   <li>User login with password recovery option</li>
+ *   <li>Company representative registration (requires staff approval)</li>
+ *   <li>Exit the system</li>
+ * </ul>
+ *
+ * <p>This class acts as the gateway to the system, validating credentials
+ * and routing users to their appropriate role-based menus after successful login.</p>
+ *
+ * @author SC2002_Group1
+ * @version 1.0
+ * @since 2025-11-18
  */
 public class MainMenu {
     private Scanner scanner;
     private HashMap<String, User> registeredAccounts;
     private List<CompanyRepresentative> pendingCompanyReps;
 
+    /**
+     * Constructs a new MainMenu with the specified dependencies.
+     *
+     * @param scanner Scanner instance for reading user input
+     * @param registeredAccounts map of all registered user accounts
+     * @param pendingCompanyReps list of company representatives awaiting approval
+     */
     public MainMenu(Scanner scanner, HashMap<String, User> registeredAccounts,
                     List<CompanyRepresentative> pendingCompanyReps) {
         this.scanner = scanner;
@@ -21,8 +43,10 @@ public class MainMenu {
     }
 
     /**
-     * Display main menu and get user choice
-     * @return User choice (1-3)
+     * Displays the main menu and prompts the user for their choice.
+     * The menu presents options for login, registration, and exit.
+     *
+     * @return the user's menu choice (1-3), or -1 if invalid input
      */
     public int displayMenu() {
         System.out.println("\n╔════════════════════════════════════════╗");
@@ -45,8 +69,20 @@ public class MainMenu {
     }
 
     /**
-     * Handle login process
-     * @return Logged in user or null if login failed
+     * Handles the login process for existing users.
+     *
+     * <p>Login process:</p>
+     * <ol>
+     *   <li>Prompts for user ID and validates account existence</li>
+     *   <li>Prompts for password or password reset option (enter '1')</li>
+     *   <li>Validates password against stored credentials</li>
+     *   <li>Returns the User object on successful login</li>
+     * </ol>
+     *
+     * <p>Password reset option allows users to recover their account
+     * without knowing the current password.</p>
+     *
+     * @return the logged-in User object if successful, null if login failed or password was reset
      */
     public User login() {
         System.out.print("\nEnter User ID: ");
@@ -71,7 +107,27 @@ public class MainMenu {
     }
 
     /**
-     * Handle company representative registration
+     * Handles company representative registration.
+     *
+     * <p>Registration process:</p>
+     * <ol>
+     *   <li>Validates email format (must contain '@')</li>
+     *   <li>Checks for duplicate email addresses</li>
+     *   <li>Collects user information (name, password, company details)</li>
+     *   <li>Validates password against complexity requirements</li>
+     *   <li>Creates a new CompanyRepresentative with PENDING status</li>
+     *   <li>Adds to pending list for Career Centre Staff approval</li>
+     * </ol>
+     *
+     * <p>Password requirements:</p>
+     * <ul>
+     *   <li>At least one uppercase letter</li>
+     *   <li>At least one lowercase letter</li>
+     *   <li>At least one digit</li>
+     *   <li>At least one special character (!@#$%)</li>
+     * </ul>
+     *
+     * <p>Note: Email address serves as the user ID for company representatives.</p>
      */
     public void registerCompanyRep() {
         System.out.println("\n=== Company Representative Registration ===");
