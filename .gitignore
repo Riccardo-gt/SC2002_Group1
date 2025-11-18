@@ -3,6 +3,8 @@ Datasets/applications.csv
 Datasets/company_reps.csv
 Datasets/internships.csv
 
+.idea/
+
 # Compiled class files
 out.*
 
