@@ -7,6 +7,32 @@ import java.util.*;
 import Models.Entities.*;
 import Models.Utility_Classes.*;
 
+/**
+ * Main application class for the Internship Placement Management System.
+ * Serves as the entry point and orchestrates the entire application flow.
+ *
+ * <p>This class is responsible for:</p>
+ * <ul>
+ *   <li>Initializing the system by loading data from CSV files</li>
+ *   <li>Managing the main application loop</li>
+ *   <li>Routing users to appropriate menus based on their role</li>
+ *   <li>Coordinating data persistence operations</li>
+ *   <li>Managing user sessions (login/logout)</li>
+ * </ul>
+ *
+ * <p>The application supports three user types:</p>
+ * <ul>
+ *   <li><b>Students:</b> Browse and apply for internships</li>
+ *   <li><b>Company Representatives:</b> Create and manage internship opportunities</li>
+ *   <li><b>Career Centre Staff:</b> Administrative oversight and approvals</li>
+ * </ul>
+ *
+ * <p>Data persistence is handled through CSV files in the Datasets directory.</p>
+ *
+ * @author SC2002_Group1
+ * @version 1.0
+ * @since 2025-11-18
+ */
 public class Main {
     static HashMap<String, User> registeredAccounts = new HashMap<>();
     static List<Internship> allInternships = new ArrayList<>();
@@ -20,6 +46,12 @@ public class Main {
     static CompanyRepMenu companyRepMenu;
     static StaffMenu staffMenu;
 
+    /**
+     * Main entry point for the Internship Placement Management System.
+     * Initializes the system, loads data, and starts the main application loop.
+     *
+     * @param args command-line arguments (not used)
+     */
     public static void main(String[] args) {
         System.out.println("=================================================");
         System.out.println("  Internship Placement Management System");
@@ -46,6 +78,11 @@ public class Main {
 
     // ==================== DATA LOADING ====================
 
+    /**
+     * Loads all system data from CSV files.
+     * This method orchestrates the loading of students, staff, company representatives,
+     * internships, and applications in the correct order to maintain referential integrity.
+     */
     static void loadData() {
         System.out.println("Loading system data...");
         FileIOHandler.StudentCSVIncludePasswords();
@@ -57,6 +94,10 @@ public class Main {
         System.out.println("System ready!\n");
     }
 
+    /**
+     * Loads student accounts from the student_list.csv file.
+     * Each student is registered with their user ID, name, major, year, email, password, and CGPA.
+     */
     static void registerStudents() {
         try {
             BufferedReader file = new BufferedReader(new FileReader("Datasets/student_list.csv"));
@@ -80,6 +121,10 @@ public class Main {
         }
     }
 
+    /**
+     * Loads career centre staff accounts from the staff_list.csv file.
+     * Each staff member is registered with their user ID, name, role, department, and email.
+     */
     static void registerStaff() {
         try {
             BufferedReader file = new BufferedReader(new FileReader("Datasets/staff_list.csv"));
@@ -103,6 +148,11 @@ public class Main {
         }
     }
 
+    /**
+     * Loads company representatives from the company_reps.csv file.
+     * Approved representatives are added to registered accounts, while pending ones
+     * are added to the pending list for staff review.
+     */
     static void loadCompanyReps() {
         List<CompanyRepresentative> reps = FileIOHandler.loadCompanyReps();
         for (CompanyRepresentative rep : reps) {
@@ -115,16 +165,28 @@ public class Main {
         System.out.println("Company representatives loaded");
     }
 
+    /**
+     * Loads internships from the internships.csv file.
+     * Links each internship to its company representative based on the stored representative ID.
+     */
     static void loadInternships() {
         allInternships = FileIOHandler.loadInternships(registeredAccounts);
         System.out.println("Internships loaded");
     }
 
+    /**
+     * Loads applications from the applications.csv file.
+     * Links each application to its corresponding student and internship.
+     */
     static void loadApplications() {
         FileIOHandler.loadApplications(allInternships, registeredAccounts);
         System.out.println("Applications loaded");
     }
 
+    /**
+     * Saves all system data to CSV files.
+     * This includes internships, applications, and company representatives (both approved and pending).
+     */
     static void saveAllData() {
         List<CompanyRepresentative> allReps = new ArrayList<>();
         for (User user : registeredAccounts.values()) {
@@ -140,6 +202,10 @@ public class Main {
 
     // ==================== LOGIN MENU ====================
 
+    /**
+     * Displays the main login menu and handles user choices.
+     * Provides options for login, company representative registration, and exit.
+     */
     static void showLoginMenu() {
         int choice = mainMenu.displayMenu();
 
@@ -165,6 +231,10 @@ public class Main {
 
     // ==================== ROUTING ====================
 
+    /**
+     * Routes the currently logged-in user to their appropriate menu.
+     * Determines the user type and displays the corresponding menu interface.
+     */
     static void routeToUserMenu() {
         if (currentUser instanceof Student) {
             showStudentMenu();
@@ -177,6 +247,11 @@ public class Main {
 
     // ==================== STUDENT MENU ====================
 
+    /**
+     * Displays the student menu and handles student-specific operations.
+     * Provides options for viewing internships, applying, managing applications,
+     * accepting placements, requesting withdrawals, and changing password.
+     */
     static void showStudentMenu() {
         Student student = (Student) currentUser;
         int choice = studentMenu.displayMenu();
@@ -215,6 +290,11 @@ public class Main {
 
     // ==================== COMPANY REP MENU ====================
 
+    /**
+     * Displays the company representative menu and handles company rep operations.
+     * Provides options for creating internships, managing internship listings,
+     * viewing applications, and managing application statuses.
+     */
     static void showCompanyRepMenu() {
         CompanyRepresentative rep = (CompanyRepresentative) currentUser;
         int choice = companyRepMenu.displayMenu();
@@ -262,6 +342,11 @@ public class Main {
 
     // ==================== STAFF MENU ====================
 
+    /**
+     * Displays the career centre staff menu and handles administrative operations.
+     * Provides options for authorizing company representatives, approving internships,
+     * managing withdrawal requests, generating reports, and viewing all internships.
+     */
     static void showStaffMenu() {
         CareerCentreStaff staff = (CareerCentreStaff) currentUser;
         int choice = staffMenu.displayMenu();
@@ -301,6 +386,10 @@ public class Main {
 
     // ==================== COMMON ====================
 
+    /**
+     * Logs out the current user and saves all data.
+     * Resets the currentUser to null, returning to the login menu.
+     */
     static void logout() {
         if (currentUser != null) {
             currentUser.logout();

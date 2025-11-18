@@ -8,13 +8,21 @@ import Models.Entities.*;
 import Models.Utility_Classes.*;
 
 /**
- * Handles company representative menu operations
- * Single Responsibility: Company rep menu display and company rep-specific actions
+ * Handles all menu display and operation logic specific to the
+ * {@link CompanyRepresentative} role.
+ * This class provides methods for creating, viewing, editing, deleting internships,
+ * and managing applications.
  */
 public class CompanyRepMenu {
     private Scanner scanner;
     private List<Internship> allInternships;
 
+    /**
+     * Constructs a new CompanyRepMenu instance.
+     *
+     * @param scanner The {@code Scanner} instance to use for input reading.
+     * @param allInternships A list containing all system {@link Internship} objects.
+     */
     public CompanyRepMenu(Scanner scanner, List<Internship> allInternships) {
         this.scanner = scanner;
         this.allInternships = allInternships;
@@ -50,6 +58,13 @@ public class CompanyRepMenu {
         return choice;
     }
 
+    /**
+     * Guides the representative through the process of creating a new internship.
+     * Collects all required details (title, dates, slots, etc.) and validates input formats.
+     * The new internship is added to the representative's list and the global list.
+     *
+     * @param rep The currently logged-in {@link CompanyRepresentative}.
+     */
     public void createInternship(CompanyRepresentative rep) {
         if (!rep.canCreateInternship()) {
             System.out.println("\nError: You have reached the maximum of 5 internships.");
@@ -94,6 +109,13 @@ public class CompanyRepMenu {
         }
     }
 
+    /**
+     * Displays a list of all internships created by the representative, optionally allowing
+     * the user to filter the list by status before display.
+     * It uses the inherited {@code filterInternships} and {@code displayInternships} methods.
+     *
+     * @param rep The currently logged-in {@link CompanyRepresentative}.
+     */
     public void viewMyInternships(CompanyRepresentative rep) {
     List<Internship> myInternships = rep.getCreatedInternships();
 
@@ -118,6 +140,12 @@ public class CompanyRepMenu {
     rep.displayInternships(displayList, "Your Internships");
 }
 
+    /**
+     * Allows the representative to modify the details of an existing internship.
+     * Edits are only permitted if the internship status is "Pending" (before staff approval).
+     *
+     * @param rep The currently logged-in {@link CompanyRepresentative}.
+     */
     public void editInternship(CompanyRepresentative rep) {
         List<Internship> myInternships = rep.getCreatedInternships();
         if (myInternships.isEmpty()) {
@@ -196,6 +224,12 @@ public class CompanyRepMenu {
         }
     }
 
+    /**
+     * Allows the representative to delete an internship opportunity.
+     * Deletion is prevented if the internship has been approved by the Career Centre staff.
+     *
+     * @param rep The currently logged-in {@link CompanyRepresentative}.
+     */
     public void deleteInternship(CompanyRepresentative rep) {
         List<Internship> myInternships = rep.getCreatedInternships();
         if (myInternships.isEmpty()) {
@@ -225,6 +259,13 @@ public class CompanyRepMenu {
         }
     }
 
+    /**
+     * Allows the representative to select an internship, view its ranked applications,
+     * and then approve or reject a specific {@link Application}.
+     * Status changes are delegated to the {@link ApplicationViewer}.
+     *
+     * @param rep The currently logged-in {@link CompanyRepresentative}.
+     */
     public void manageApplications(CompanyRepresentative rep) {
         List<Internship> myInternships = rep.getCreatedInternships();
         if (myInternships.isEmpty()) {
@@ -301,6 +342,12 @@ public class CompanyRepMenu {
         }
     }
 
+    /**
+     * Toggles the visibility status of a selected internship.
+     * The operation is delegated to the {@link CompanyRepresentative}'s {@code changeVisibility} method.
+     *
+     * @param rep The currently logged-in {@link CompanyRepresentative}.
+     */
     public void toggleVisibility(CompanyRepresentative rep) {
         List<Internship> myInternships = rep.getCreatedInternships();
         if (myInternships.isEmpty()) {

@@ -6,13 +6,25 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Handles student menu operations
- * Single Responsibility: Student menu display and student-specific actions
+ * Handles all menu display and operation logic specific to the
+ * {@link Student} role.
+ * This class provides methods for viewing, applying for, and managing applications
+ * for internship opportunities.
+ *
+ * @see Student
+ * @see Internship
+ * @see Application
  */
 public class StudentMenu {
     private Scanner scanner;
     private List<Internship> allInternships;
 
+    /**
+     * Constructs a new StudentMenu instance.
+     *
+     * @param scanner The {@code Scanner} instance to use for input reading.
+     * @param allInternships A list containing all system {@link Internship} objects.
+     */
     public StudentMenu(Scanner scanner, List<Internship> allInternships) {
         this.scanner = scanner;
         this.allInternships = allInternships;
@@ -46,6 +58,13 @@ public class StudentMenu {
         return choice;
     }
 
+    /**
+     * Filters the global list of internships to display those that are currently accepting
+     * applications and for which the student is eligible (based on level and preferred major).
+     * Allows the student to apply additional filters (level, company) afterwards.
+     *
+     * @param student The currently logged-in {@link Student}.
+     */
     public void viewAvailableInternships(Student student) {
     List<Internship> available = allInternships.stream()
             .filter(i -> i.isAcceptingApplications())
@@ -72,36 +91,50 @@ public class StudentMenu {
     student.displayInternships(available, "Available Internships");
 }
 
-private List<Internship> applyAdditionalFilters(Student student, List<Internship> internships) {
-    System.out.println("\n=== Additional Filters ===");
-    System.out.println("1. Filter by Level");
-    System.out.println("2. Filter by Company");
-    System.out.println("3. No additional filters");
-    System.out.print("Select option: ");
-    
-    try {
-        int choice = Integer.parseInt(scanner.nextLine().trim());
-        switch (choice) {
-            case 1:
-                System.out.print("Enter level (Basic/Intermediate/Advanced): ");
-                String level = scanner.nextLine().trim();
-                return student.filterInternships(internships, "level", level);
-            case 2:
-                System.out.print("Enter company name: ");
-                String company = scanner.nextLine().trim();
-                return student.filterInternships(internships, "company", company);
-            case 3:
-                return internships;
-            default:
-                System.out.println("Invalid choice. Showing all results.");
-                return internships;
-        }
-    } catch (NumberFormatException e) {
-        System.out.println("Invalid input. Showing all results.");
-        return internships;
-    }
-}
+    /**
+     * Applies additional filters (Level or Company) to a provided list of internships based on user input.
+     *
+     * @param student The currently logged-in {@link Student}.
+     * @param internships The list of internships to filter.
+     * @return The filtered list of internships.
+     */
+    private List<Internship> applyAdditionalFilters(Student student, List<Internship> internships) {
+        System.out.println("\n=== Additional Filters ===");
+        System.out.println("1. Filter by Level");
+        System.out.println("2. Filter by Company");
+        System.out.println("3. No additional filters");
+        System.out.print("Select option: ");
 
+        try {
+            int choice = Integer.parseInt(scanner.nextLine().trim());
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter level (Basic/Intermediate/Advanced): ");
+                    String level = scanner.nextLine().trim();
+                    return student.filterInternships(internships, "level", level);
+                case 2:
+                    System.out.print("Enter company name: ");
+                    String company = scanner.nextLine().trim();
+                    return student.filterInternships(internships, "company", company);
+                case 3:
+                    return internships;
+                default:
+                    System.out.println("Invalid choice. Showing all results.");
+                    return internships;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Showing all results.");
+            return internships;
+        }
+    }
+
+    /**
+     * Presents the student with a list of eligible internships they have not yet applied to,
+     * and prompts the student to select one for application.
+     * The application submission logic is delegated to {@link Student#applyForInternship}.
+     *
+     * @param student The currently logged-in {@link Student}.
+     */
     public void applyForInternship(Student student) {
         List<Internship> available = allInternships.stream()
                 .filter(i -> i.isAcceptingApplications())
@@ -149,6 +182,14 @@ private List<Internship> applyAdditionalFilters(Student student, List<Internship
         }
     }
 
+    /**
+     * Allows the student to view and accept an internship offer.
+     * Acceptance is only possible if the student has not already confirmed a placement
+     * and the application status is {@link Application.ApplicationStatus#SUCCESSFUL} and not yet confirmed.
+     * The confirmation logic is delegated to {@link Student#acceptPlacement}.
+     *
+     * @param student The currently logged-in {@link Student}.
+     */
     public void acceptPlacement(Student student) {
         // Check if already accepted a placement
         boolean hasConfirmedPlacement = student.getApplications().stream()
@@ -190,6 +231,12 @@ private List<Internship> applyAdditionalFilters(Student student, List<Internship
         }
     }
 
+    /**
+     * Guides the student through selecting one of their submitted applications to request a withdrawal.
+     * The request logic is delegated to {@link Student#requestWithdrawal}.
+     *
+     * @param student The currently logged-in {@link Student}.
+     */
     public void requestWithdrawal(Student student) {
         if (student.getApplications().isEmpty()) {
             System.out.println("\nNo applications to withdraw.");

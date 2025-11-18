@@ -6,8 +6,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Handles career centre staff menu operations
- * Single Responsibility: Staff menu display and staff-specific actions
+ * Handles all menu display and operation logic specific to the
+ * {@link CareerCentreStaff} role.
+ * This class provides methods for administrative functions such as authorizing
+ * company accounts, approving internships, managing withdrawals, and generating reports.
+ *
+ * @see CareerCentreStaff
+ * @see Internship
+ * @see CompanyRepresentative
+ * @see Application
  */
 public class StaffMenu {
     private Scanner scanner;
@@ -15,6 +22,14 @@ public class StaffMenu {
     private List<CompanyRepresentative> pendingCompanyReps;
     private HashMap<String, User> registeredAccounts;
 
+    /**
+     * Constructs a new StaffMenu instance.
+     *
+     * @param scanner The {@code Scanner} instance to use for input reading.
+     * @param allInternships A list containing all system {@link Internship} objects.
+     * @param pendingCompanyReps A list of {@link CompanyRepresentative} accounts requiring authorization.
+     * @param registeredAccounts A map holding all active {@link User} accounts.
+     */
     public StaffMenu(Scanner scanner, List<Internship> allInternships,
                      List<CompanyRepresentative> pendingCompanyReps,
                      HashMap<String, User> registeredAccounts) {
@@ -52,6 +67,13 @@ public class StaffMenu {
         return choice;
     }
 
+    /**
+     * Manages the authorization process for new {@link CompanyRepresentative} accounts.
+     * Staff can approve or reject pending representatives. Approved accounts are moved
+     * from the pending list to the registered accounts map.
+     *
+     * @param staff The currently logged-in {@link CareerCentreStaff} member.
+     */
     public void authorizeCompanyReps(CareerCentreStaff staff) {
         if (pendingCompanyReps.isEmpty()) {
             System.out.println("\nNo pending company representative registrations.");
@@ -94,6 +116,13 @@ public class StaffMenu {
         }
     }
 
+    /**
+     * Manages the approval process for new {@link Internship} opportunities.
+     * Staff can view pending internships and choose to approve (making them visible)
+     * or reject them.
+     *
+     * @param staff The currently logged-in {@link CareerCentreStaff} member.
+     */
     public void approveInternships(CareerCentreStaff staff) {
         List<Internship> pending = allInternships.stream()
                 .filter(i -> "Pending".equals(i.getStatus()))
@@ -142,6 +171,14 @@ public class StaffMenu {
         }
     }
 
+    /**
+     * Manages student withdrawal requests for applications.
+     * Staff can view all applications with a {@link Application.WithdrawalStatus#PENDING}
+     * and choose to approve (marking the application as {@link Application.ApplicationStatus#WITHDRAWN})
+     * or reject the request.
+     *
+     * @param staff The currently logged-in {@link CareerCentreStaff} member.
+     */
     public void manageWithdrawalRequests(CareerCentreStaff staff) {
         List<Application> pending = allInternships.stream()
                 .flatMap(i -> i.getApplications().stream())
@@ -198,6 +235,13 @@ public class StaffMenu {
         }
     }
 
+    /**
+     * Guides the staff member through filtering internships and generating a report.
+     * This method collects the filter type (Status, Level, or Major) and the filter value,
+     * then delegates the actual filtering and display to {@link CareerCentreStaff#generateReport}.
+     *
+     * @param staff The currently logged-in {@link CareerCentreStaff} member.
+     */
     public void generateReports(CareerCentreStaff staff) {
         System.out.println("\n=== Generate Report ===");
         System.out.println("1. Filter by Status");
@@ -252,6 +296,9 @@ public class StaffMenu {
         staff.generateReport(allInternships, filter, filterType);
     }
 
+    /**
+     * Displays details for all internships currently registered in the system.
+     */
     public void viewAllInternships() {
         if (allInternships.isEmpty()) {
             System.out.println("\nNo internships in the system.");
