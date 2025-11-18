@@ -2,9 +2,8 @@ package Models.Entities;
 
 import Models.Utility_Classes.FileIOHandler;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 // User is an abstract base class as all users (Student, CareerCentreStaff) are one of the specific roles.
 public abstract class User {
