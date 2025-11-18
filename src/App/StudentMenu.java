@@ -47,32 +47,60 @@ public class StudentMenu {
     }
 
     public void viewAvailableInternships(Student student) {
-        List<Internship> available = allInternships.stream()
-                .filter(i -> i.isAcceptingApplications())
-                .filter(i -> student.isEligibleForLevel(i.getLevel()))
-                .filter(i -> student.matchesMajor(i.getPreferredMajor()))
-                .sorted((i1, i2) -> i1.getTitle().compareToIgnoreCase(i2.getTitle()))
-                .collect(Collectors.toList());
+    List<Internship> available = allInternships.stream()
+            .filter(i -> i.isAcceptingApplications())
+            .filter(i -> student.isEligibleForLevel(i.getLevel()))
+            .filter(i -> student.matchesMajor(i.getPreferredMajor()))
+            .sorted((i1, i2) -> i1.getTitle().compareToIgnoreCase(i2.getTitle()))
+            .collect(Collectors.toList());
 
-        if (available.isEmpty()) {
-            System.out.println("\nNo internships available for your profile.");
-            return;
-        }
-
-        System.out.println("\n=== Available Internships ===");
-        for (int i = 0; i < available.size(); i++) {
-            Internship internship = available.get(i);
-            System.out.println("\n[" + (i + 1) + "] " + internship.getTitle());
-            System.out.println("    Company: " + (internship.getCompanyRepresentative() != null
-                    ? internship.getCompanyRepresentative().getCompanyName()
-                    : "N/A"));
-            System.out.println("    Level: " + internship.getLevel());
-            System.out.println("    Preferred Major: " + internship.getPreferredMajor());
-            System.out.println("    Description: " + internship.getDescription());
-            System.out.println("    Period: " + internship.getOpeningDate() + " to " + internship.getClosingDate());
-            System.out.println("    Slots: " + internship.getSlots());
-        }
+    if (available.isEmpty()) {
+        System.out.println("\nNo internships available for your profile.");
+        return;
     }
+
+    // Ask if user wants to filter
+    System.out.println("\nFound " + available.size() + " internships for your profile.");
+    System.out.print("Do you want to filter results? (y/n): ");
+    String choice = scanner.nextLine().trim().toLowerCase();
+    
+    if (choice.equals("y") || choice.equals("yes")) {
+        available = applyAdditionalFilters(student, available);
+    }
+
+    
+    student.displayInternships(available, "Available Internships");
+}
+
+private List<Internship> applyAdditionalFilters(Student student, List<Internship> internships) {
+    System.out.println("\n=== Additional Filters ===");
+    System.out.println("1. Filter by Level");
+    System.out.println("2. Filter by Company");
+    System.out.println("3. No additional filters");
+    System.out.print("Select option: ");
+    
+    try {
+        int choice = Integer.parseInt(scanner.nextLine().trim());
+        switch (choice) {
+            case 1:
+                System.out.print("Enter level (Basic/Intermediate/Advanced): ");
+                String level = scanner.nextLine().trim();
+                return student.filterInternships(internships, "level", level);
+            case 2:
+                System.out.print("Enter company name: ");
+                String company = scanner.nextLine().trim();
+                return student.filterInternships(internships, "company", company);
+            case 3:
+                return internships;
+            default:
+                System.out.println("Invalid choice. Showing all results.");
+                return internships;
+        }
+    } catch (NumberFormatException e) {
+        System.out.println("Invalid input. Showing all results.");
+        return internships;
+    }
+}
 
     public void applyForInternship(Student student) {
         List<Internship> available = allInternships.stream()
