@@ -1,4 +1,4 @@
-StudentID,Name,Major,Year,Email,Password
+StudentID,Name,Major,Year,Email
 U2310001A,Tan Wei Ling,Computer Science,2,tan001@e.ntu.edu.sg
 U2310002B,Ng Jia Hao,Data Science & AI,3,ng002@e.ntu.edu.sg
 U2310003C,Lim Yi Xuan,Computer Engineering,4,lim003@e.ntu.edu.sg
