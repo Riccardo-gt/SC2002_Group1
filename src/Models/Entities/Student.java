@@ -9,6 +9,7 @@ public class Student extends User {
     int studyYear = 0;
     float cgpa;
     List<Application> applications;
+    private boolean hasAcceptedPlacement = false;
 
     public Student(String userId, String name, String email, String password, String major, int studyYear, float cgpa) {
         super(userId, name, email, password);
@@ -142,18 +143,26 @@ public class Student extends User {
             return false;
         }
 
+        // Check if student has already accepted a placement
+        if (hasAcceptedPlacement) {
+            System.out.println("Error: You have already accepted a placement. You can only accept one internship.");
+            return false;
+        }
+
         // Confirm acceptance
         application.confirmAcceptance();
+        hasAcceptedPlacement = true;
 
         // Decrease slot count for the internship
         Internship internship = application.getInternship();
         internship.setSlots(internship.getSlots() - 1);
         System.out.println("You have accepted the placement for: " + internship.getTitle());
 
-        // Withdraw all other applications
+        // Withdraw all other applications (both PENDING and SUCCESSFUL)
         for (Application app : applications) {
-            if (app != application && app.getStatus() == Application.ApplicationStatus.PENDING) {
-                app.setStatus(Application.ApplicationStatus.UNSUCCESSFUL);
+            if (app != application && (app.getStatus() == Application.ApplicationStatus.PENDING ||
+                                       app.getStatus() == Application.ApplicationStatus.SUCCESSFUL)) {
+                app.setStatus(Application.ApplicationStatus.WITHDRAWN);
                 System.out.println("Automatically withdrew application for: " + app.getInternship().getTitle());
             }
         }
