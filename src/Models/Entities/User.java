@@ -128,6 +128,80 @@ public abstract class User {
         return foundLower && foundUpper && foundSpecial && foundNumber;
     }
 
+    public List<Internship> filterInternships(List<Internship> internships, String filterType, String filterValue) {
+        if (internships == null || internships.isEmpty()) {
+            return new ArrayList<>();
+        }
+        
+        List<Internship> filtered = new ArrayList<>();
+        
+        switch (filterType.toLowerCase()) {
+            case "status":
+                filtered = internships.stream()
+                        .filter(i -> i.getStatus().equalsIgnoreCase(filterValue))
+                        .collect(Collectors.toList());
+                break;
+                
+            case "level":
+                filtered = internships.stream()
+                        .filter(i -> i.getLevel().equalsIgnoreCase(filterValue))
+                        .collect(Collectors.toList());
+                break;
+                
+            case "major":
+                filtered = internships.stream()
+                        .filter(i -> i.getPreferredMajor().equalsIgnoreCase(filterValue))
+                        .collect(Collectors.toList());
+                break;
+                
+            case "company":
+                filtered = internships.stream()
+                        .filter(i -> i.getCompanyRepresentative() != null && 
+                                   i.getCompanyRepresentative().getCompanyName().equalsIgnoreCase(filterValue))
+                        .collect(Collectors.toList());
+                break;
+                
+            case "visible":
+                boolean isVisible = Boolean.parseBoolean(filterValue);
+                filtered = internships.stream()
+                        .filter(i -> i.isVisible() == isVisible)
+                        .collect(Collectors.toList());
+                break;
+                
+            default:
+                System.out.println("Unknown filter type: " + filterType);
+                return internships;
+        }
+        
+        return filtered;
+    }
+    
+    /**
+     * Display filtered internships in a consistent format
+     */
+    public void displayInternships(List<Internship> internships, String filterDescription) {
+        if (internships.isEmpty()) {
+            System.out.println("No internships found for: " + filterDescription);
+            return;
+        }
+        
+        System.out.println("\n=== " + filterDescription + " (" + internships.size() + " found) ===");
+        for (int i = 0; i < internships.size(); i++) {
+            Internship internship = internships.get(i);
+            System.out.println("\n[" + (i + 1) + "] " + internship.getTitle());
+            System.out.println("    Company: " + (internship.getCompanyRepresentative() != null 
+                    ? internship.getCompanyRepresentative().getCompanyName() 
+                    : "N/A"));
+            System.out.println("    Level: " + internship.getLevel());
+            System.out.println("    Preferred Major: " + internship.getPreferredMajor());
+            System.out.println("    Status: " + internship.getStatus());
+            System.out.println("    Visible: " + (internship.isVisible() ? "Yes" : "No"));
+            System.out.println("    Period: " + internship.getOpeningDate() + " to " + internship.getClosingDate());
+            System.out.println("    Slots: " + internship.getSlots());
+            System.out.println("    Applications: " + internship.getApplications().size());
+        }
+    }
+
     
 }
 
