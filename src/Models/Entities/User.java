@@ -5,7 +5,18 @@ import Models.Utility_Classes.FileIOHandler;
 import java.util.*;
 import java.util.stream.Collectors;
 
-// User is an abstract base class as all users (Student, CareerCentreStaff) are one of the specific roles.
+/**
+ * Abstract base class representing a user in the Internship Placement Management System.
+ * All users (Student, CompanyRepresentative, CareerCentreStaff) inherit from this class.
+ * Provides common functionality for authentication, password management, and internship filtering.
+ *
+ * <p>This class implements encapsulation by keeping all attributes private and providing
+ * controlled access through public methods.</p>
+ *
+ * @author SC2002_Group1
+ * @version 1.0
+ * @since 2025-11-18
+ */
 public abstract class User {
     // Encapsulation: All attributes are private 
     private String userID;
@@ -13,6 +24,14 @@ public abstract class User {
     private String email;
     private String password;
 
+    /**
+     * Constructs a new User with the specified details.
+     *
+     * @param userID unique identifier for the user
+     * @param name full name of the user
+     * @param email email address of the user
+     * @param password password for authentication
+     */
     public User(String userID, String name, String email, String password) {
         this.userID = userID;
         this.name = name;
@@ -33,15 +52,31 @@ public abstract class User {
     }
 
     public String getEmail() { return email; }
-        
+
+    /**
+     * Authenticates the user by comparing the entered password with the stored password.
+     *
+     * @param enteredPassword the password entered by the user
+     * @return true if the entered password matches the stored password, false otherwise
+     */
     public boolean login(String enteredPassword) {
         return this.password.equals(enteredPassword); // Use hashing
     }
 
+    /**
+     * Logs out the user and displays a confirmation message.
+     */
     public void logout() {
         System.out.println(this.name + " (" + this.userID + ") has been logged out.");
     }
 
+    /**
+     * Resets the user's password without requiring the current password.
+     * Used for password recovery. Validates the new password against complexity requirements
+     * and persists the change to the CSV file.
+     *
+     * @param scanner Scanner object for reading user input
+     */
     public void resetPassword(Scanner scanner) {
         // 2. Input New Password
         System.out.println("Enter new password (Ensure it has at least 1 Uppercase, 1 Lowercase, 1 special character (!@#$%), and 1 number):");
@@ -64,6 +99,13 @@ public abstract class User {
         }
     }
 
+    /**
+     * Changes the user's password after verifying the current password.
+     * Validates the new password against complexity requirements and persists
+     * the change to the CSV file.
+     *
+     * @param scanner Scanner object for reading user input
+     */
     public void changePassword(Scanner scanner) {
         System.out.println("--- Change Password ---");
         String currentPassword;
@@ -98,7 +140,21 @@ public abstract class User {
             System.out.println("Your password change may not persist after logout.");
         }
     }
-    
+
+    /**
+     * Validates a password against complexity requirements.
+     * A valid password must contain:
+     * <ul>
+     *   <li>At least one uppercase letter</li>
+     *   <li>At least one lowercase letter</li>
+     *   <li>At least one digit</li>
+     *   <li>At least one special character (!@#$%)</li>
+     *   <li>Only allowed characters (letters, digits, and !@#$%)</li>
+     * </ul>
+     *
+     * @param password the password to validate
+     * @return true if the password meets all complexity requirements, false otherwise
+     */
     public static boolean isPasswordValid(String password) {
         final int LENGTH = password.length();
         boolean foundLower = false, foundUpper = false, foundSpecial = false, foundNumber = false;
@@ -127,6 +183,22 @@ public abstract class User {
         return foundLower && foundUpper && foundSpecial && foundNumber;
     }
 
+    /**
+     * Filters a list of internships based on the specified criteria.
+     * Supported filter types include:
+     * <ul>
+     *   <li>status - filters by internship status (Pending, Approved, Rejected, Filled)</li>
+     *   <li>level - filters by difficulty level (Basic, Intermediate, Advanced)</li>
+     *   <li>major - filters by preferred major</li>
+     *   <li>company - filters by company name</li>
+     *   <li>visible - filters by visibility status</li>
+     * </ul>
+     *
+     * @param internships the list of internships to filter
+     * @param filterType the type of filter to apply
+     * @param filterValue the value to filter by
+     * @return a filtered list of internships matching the criteria
+     */
     public List<Internship> filterInternships(List<Internship> internships, String filterType, String filterValue) {
         if (internships == null || internships.isEmpty()) {
             return new ArrayList<>();
@@ -174,9 +246,13 @@ public abstract class User {
         
         return filtered;
     }
-    
+
     /**
-     * Display filtered internships in a consistent format
+     * Displays a formatted list of internships with detailed information.
+     * Shows internship title, company, level, major, status, visibility, period, slots, and applications count.
+     *
+     * @param internships the list of internships to display
+     * @param filterDescription a description of the filter applied (for display purposes)
      */
     public void displayInternships(List<Internship> internships, String filterDescription) {
         if (internships.isEmpty()) {

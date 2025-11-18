@@ -1,5 +1,21 @@
 package Models.Entities;
 
+/**
+ * Represents an application submitted by a student for an internship opportunity.
+ * Tracks the application status, withdrawal status, and placement confirmation.
+ *
+ * <p>An application progresses through various states:</p>
+ * <ul>
+ *   <li>PENDING: Initial state when application is submitted</li>
+ *   <li>SUCCESSFUL: Approved by company representative</li>
+ *   <li>UNSUCCESSFUL: Rejected by company representative</li>
+ *   <li>WITHDRAWN: Student withdrew the application</li>
+ * </ul>
+ *
+ * @author SC2002_Group1
+ * @version 1.0
+ * @since 2025-11-18
+ */
 public class Application {
     private Student student;
     private Internship internship;
@@ -22,6 +38,15 @@ public class Application {
     private WithdrawalStatus withdrawalStatus;
     private boolean confirmed;
 
+    /**
+     * Constructs a new Application instance.
+     * The initial status is set to {@link ApplicationStatus#PENDING},
+     * {@code confirmed} is set to {@code false}, and
+     * {@code withdrawalStatus} is set to {@link WithdrawalStatus#NOTREQUESTED}.
+     *
+     * @param student The student submitting the application.
+     * @param internship The internship the student is applying for.
+     */
     public Application(Student student, Internship internship) {
         this.student = student;
         this.internship = internship;
@@ -62,6 +87,12 @@ public class Application {
         this.withdrawalStatus = withdrawalStatus;
     }
 
+    /**
+     * Attempts to confirm the student's acceptance of the internship offer.
+     * This operation is only permitted if the current application status is
+     * {@link ApplicationStatus#SUCCESSFUL}.
+     * If successful, the {@code confirmed} flag is set to {@code true}.
+     */
     public void confirmAcceptance() {
         if (this.status == ApplicationStatus.SUCCESSFUL) {
             setConfirmed(true);

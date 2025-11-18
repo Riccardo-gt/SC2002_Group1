@@ -7,9 +7,24 @@ import Models.Entities.Student;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Utility class for viewing and managing internship listings.
+ * Provides functionality to display internships, filter by availability,
+ * submit applications, and request withdrawals.
+ *
+ * <p>This class acts as a facade for internship-related operations,
+ * simplifying the interaction between students and internship opportunities.</p>
+ *
+ * @author SC2002_Group1
+ * @version 1.0
+ * @since 2025-11-18
+ */
 public class InternshipViewer {
     private List<Internship> internships;
-    
+
+    /**
+     * Constructs a new InternshipViewer with an empty internship list.
+     */
     public InternshipViewer() {
         internships = new ArrayList<Internship>();
     }
@@ -22,6 +37,10 @@ public class InternshipViewer {
         internships.add(internship);
     }
 
+    /**
+     * Displays all internships in the viewer's list.
+     * Shows detailed information for each internship.
+     */
     public void viewInternships() {
         for (Internship internship: internships) {
             internship.displayDetails();
@@ -46,6 +65,11 @@ public class InternshipViewer {
         System.out.println("Please contact Career Centre Staff for approval.");
     }
 
+    /**
+     * Gets a list of internships that are currently accepting applications.
+     *
+     * @return list of open internships
+     */
     public List<Internship> getOpenInternships() {
         List<Internship> openInternships = new ArrayList<>();
         for (Internship internship : internships) {

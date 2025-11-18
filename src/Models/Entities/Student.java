@@ -4,6 +4,24 @@ import Models.Utility_Classes.InternshipViewer;
 
 import java.util.*;
 
+
+/**
+ * Represents a student user in the Internship Placement Management System.
+ * Students can browse internships, submit applications, accept placements, and request withdrawals.
+ *
+ * <p>Key features:</p>
+ * <ul>
+ *   <li>Can apply for up to 3 internships simultaneously</li>
+ *   <li>Year 1-2 students can only apply for Basic level internships</li>
+ *   <li>Year 3+ students can apply for all levels</li>
+ *   <li>Can accept only one placement offer</li>
+ *   <li>Must match the preferred major of the internship</li>
+ * </ul>
+ *
+ * @author SC2002_Group1
+ * @version 1.0
+ * @since 2025-11-18
+ */
 public class Student extends User {
     String major = "";
     int studyYear = 0;
@@ -11,6 +29,17 @@ public class Student extends User {
     List<Application> applications;
     private boolean hasAcceptedPlacement = false;
 
+    /**
+     * Constructs a new Student with the specified details.
+     *
+     * @param userId unique identifier for the student
+     * @param name full name of the student
+     * @param email email address of the student
+     * @param password password for authentication
+     * @param major the student's major/field of study
+     * @param studyYear the student's current year of study
+     * @param cgpa the student's Cumulative Grade Point Average
+     */
     public Student(String userId, String name, String email, String password, String major, int studyYear, float cgpa) {
         super(userId, name, email, password);
         this.major = major;
@@ -40,7 +69,11 @@ public class Student extends User {
     }
 
     /**
-     * Check if student can apply for more internships (max 3)
+     * Checks if the student can apply for more internships.
+     * Students are limited to a maximum of 3 active applications
+     * (applications that are not marked as UNSUCCESSFUL).
+     *
+     * @return true if the student can apply for more internships, false otherwise
      */
     public boolean canApply() {
         long activeApplications = applications.stream()
@@ -50,9 +83,14 @@ public class Student extends User {
     }
 
     /**
-     * Check if student is eligible for a given internship level
-     * Year 1-2: Basic only
-     * Year 3+: All levels
+     * Checks if the student is eligible for a given internship level based on year of study.
+     * <ul>
+     *   <li>Year 1-2: Basic level only</li>
+     *   <li>Year 3+: All levels (Basic, Intermediate, Advanced)</li>
+     * </ul>
+     *
+     * @param level the internship level to check eligibility for
+     * @return true if the student is eligible for the specified level, false otherwise
      */
     public boolean isEligibleForLevel(String level) {
         if (studyYear <= 2) {
@@ -62,7 +100,10 @@ public class Student extends User {
     }
 
     /**
-     * Check if internship matches student's major
+     * Checks if the student's major matches the internship's preferred major.
+     *
+     * @param preferredMajor the preferred major for the internship
+     * @return true if the student's major matches, false otherwise
      */
     public boolean matchesMajor(String preferredMajor) {
         return this.major.equalsIgnoreCase(preferredMajor);
@@ -72,6 +113,19 @@ public class Student extends User {
         internshipViewer.viewInternships();
     }
 
+    /**
+     * Submits an application for the specified internship.
+     * Performs validation checks before submitting:
+     * <ul>
+     *   <li>Verifies student hasn't reached the 3 application limit</li>
+     *   <li>Checks eligibility for the internship level</li>
+     *   <li>Ensures the internship is accepting applications</li>
+     *   <li>Prevents duplicate applications</li>
+     * </ul>
+     *
+     * @param internship the internship to apply for
+     * @return true if the application was successfully submitted, false otherwise
+     */
     public boolean applyForInternship(Internship internship) {
         // Validation checks
         if (!canApply()) {
@@ -105,6 +159,10 @@ public class Student extends User {
         return true;
     }
 
+    /**
+     * Displays all internships the student has applied for, showing their status,
+     * placement confirmation, withdrawal status, and company information.
+     */
     public void viewAppliedInternships() {
         if (applications.isEmpty()) {
             System.out.println("No applications found.");
@@ -124,6 +182,18 @@ public class Student extends User {
         }
     }
 
+    /**
+     * Accepts a placement offer for an approved application.
+     * <ul>
+     *   <li>Validates that the application belongs to this student</li>
+     *   <li>Ensures the application status is SUCCESSFUL</li>
+     *   <li>Prevents accepting multiple placements</li>
+     *   <li>Automatically withdraws all other applications</li>
+     * </ul>
+     *
+     * @param application the application to accept
+     * @return true if the placement was successfully accepted, false otherwise
+     */
     public boolean acceptPlacement(Application application) {
         if (!applications.contains(application)) {
             System.out.println("Error: Application not found.");
@@ -160,6 +230,13 @@ public class Student extends User {
         return true;
     }
 
+    /**
+     * Requests withdrawal for an application.
+     * The withdrawal request must be approved by Career Centre Staff.
+     *
+     * @param application the application to withdraw
+     * @return true if the withdrawal request was successfully submitted, false otherwise
+     */
     public boolean requestWithdrawal(Application application) {
         if (!applications.contains(application)) {
             System.out.println("Error: Application not found.");

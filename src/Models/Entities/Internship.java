@@ -4,6 +4,30 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents an internship opportunity in the Internship Placement Management System.
+ * Manages internship details, application period, visibility, and tracks applications.
+ *
+ * <p>Internship lifecycle:</p>
+ * <ul>
+ *   <li>Created by Company Representative with PENDING status</li>
+ *   <li>Approved/Rejected by Career Centre Staff</li>
+ *   <li>Accepts applications during the application period</li>
+ *   <li>Marked as FILLED when all slots are confirmed</li>
+ * </ul>
+ *
+ * <p>Key features:</p>
+ * <ul>
+ *   <li>Up to 10 slots per internship</li>
+ *   <li>Level-based eligibility (Basic, Intermediate, Advanced)</li>
+ *   <li>Major preference filtering</li>
+ *   <li>Visibility control by company representative</li>
+ * </ul>
+ *
+ * @author SC2002_Group1
+ * @version 1.0
+ * @since 2025-11-18
+ */
 public class Internship {
     private String title;
     private String description;
@@ -18,6 +42,10 @@ public class Internship {
     private List<Application> applications;
     private int originalSlots;
 
+    /**
+     * Default constructor for an Internship.
+     * Initializes default values: status to "Pending", visibility to true, and slots to 1.
+     */
     public Internship() {
         this.applications = new ArrayList<>();
         this.isVisible = true;
@@ -26,6 +54,19 @@ public class Internship {
         this.originalSlots = 1;
     }
 
+    /**
+     * Constructs a new Internship instance with comprehensive details.
+     * Status is initialized to "Pending" and visibility to true.
+     *
+     * @param title The title of the internship.
+     * @param description The detailed description.
+     * @param level The required experience level.
+     * @param preferredMajor The preferred major.
+     * @param openingDate The application opening date.
+     * @param closingDate The application closing date.
+     * @param slots The total number of available positions.
+     * @param representative The responsible {@link CompanyRepresentative}.
+     */
     public Internship(String title, String description, String level, 
                      String preferredMajor, LocalDate openingDate, 
                      LocalDate closingDate, int slots, CompanyRepresentative representative) {
@@ -143,6 +184,12 @@ public class Internship {
         }
     }
 
+    /**
+     * Adds a new {@link Application} to the list for this internship and updates the filled status.
+     * The application is only added if it is not null and not already present.
+     *
+     * @param application The application to add.
+     */
     public void addApplication(Application application) {
         if (application != null && !applications.contains(application)) {
             applications.add(application);
@@ -150,15 +197,36 @@ public class Internship {
         }
     }
 
+    /**
+     * Determines if the internship is currently open and accepting new applications.
+     * The conditions are:
+     * <ul>
+     * <li>The internship must be visible.</li>
+     * <li>The status must be "Approved".</li>
+     * <li>The current date must be between the opening and closing dates (inclusive).</li>
+     * </ul>
+     *
+     * @return {@code true} if accepting applications; {@code false} otherwise.
+     */
     public boolean isAcceptingApplications() {
         LocalDate today = LocalDate.now();
         return isVisible && "Approved".equals(status) && !today.isBefore(openingDate) && !today.isAfter(closingDate);
     }
 
+    /**
+     * Toggles the visibility of the internship to students.
+     *
+     * @param isVisible {@code true} to make visible; {@code false} to hide.
+     */
     public void toggleVisibility(boolean isVisible) {
         this.isVisible = isVisible;
     }
 
+    /**
+     * Recalculates the available slots and updates the internship status to "Filled"
+     * if the number of confirmed applications meets or exceeds the {@code originalSlots}.
+     * If the confirmed count drops below {@code originalSlots}, the status is reverted to "Approved".
+     */
     public void checkFilledStatus() {
         if (originalSlots > 0) {
             long confirmedCount = applications.stream()
@@ -179,6 +247,9 @@ public class Internship {
         }
     }
 
+    /**
+     * Prints all relevant details of the internship to the console in a structured format.
+     */
     public void displayDetails() {
         System.out.println("=== Internship Details ===");
         System.out.println("Title: " + title);

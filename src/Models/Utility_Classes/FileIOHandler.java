@@ -8,9 +8,28 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
- * Handles all file I/O operations for the system using CSV format only.
- * Manages persistence for internships, applications, and company
- * representatives.
+ * Handles all file input/output operations for the Internship Placement Management System.
+ * Manages persistence for internships, applications, and company representatives using CSV format.
+ *
+ * <p>This class provides centralized file I/O operations including:</p>
+ * <ul>
+ *   <li>Loading and saving internship data</li>
+ *   <li>Loading and saving application data</li>
+ *   <li>Loading and saving company representative data</li>
+ *   <li>Password management across all user types</li>
+ *   <li>CSV file migration for backward compatibility</li>
+ * </ul>
+ *
+ * <p>File formats:</p>
+ * <ul>
+ *   <li><b>internships.csv:</b> internshipID, title, description, level, preferredMajor, openingDate, closingDate, status, isVisible, companyRepID, slots</li>
+ *   <li><b>applications.csv:</b> applicationID, studentID, internshipID, status, withdrawalStatus, confirmed</li>
+ *   <li><b>company_reps.csv:</b> userID, name, email, password, companyName, position, department, status</li>
+ * </ul>
+ *
+ * @author SC2002_Group1
+ * @version 1.0
+ * @since 2025-11-18
  */
 public class FileIOHandler {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -23,9 +42,13 @@ public class FileIOHandler {
     // ==================== INTERNSHIP PERSISTENCE ====================
 
     /**
-     * Save all internships to CSV file
-     * Format:
-     * internshipID,title,description,level,preferredMajor,openingDate,closingDate,status,isVisible,companyRepID,slots
+     * Saves all internships to the CSV file.
+     *
+     * <p>CSV Format: internshipID, title, description, level, preferredMajor,
+     * openingDate, closingDate, status, isVisible, companyRepID, slots</p>
+     *
+     * @param internships list of internships to save
+     * @param users map of users for resolving company representative IDs
      */
     public static void saveInternships(List<Internship> internships, HashMap<String, User> users) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(INTERNSHIPS_FILE))) {
@@ -55,7 +78,11 @@ public class FileIOHandler {
     }
 
     /**
-     * Load internships from CSV file
+     * Loads internships from the CSV file.
+     * Links each internship to its company representative if available.
+     *
+     * @param users map of users for resolving company representative IDs
+     * @return list of loaded internships
      */
     public static List<Internship> loadInternships(HashMap<String, User> users) {
         List<Internship> internships = new ArrayList<>();
@@ -116,8 +143,11 @@ public class FileIOHandler {
     // ==================== APPLICATION PERSISTENCE ====================
 
     /**
-     * Save all applications to CSV file
-     * Format: applicationID,studentID,internshipID,status,confirmed
+     * Saves all applications to the CSV file.
+     *
+     * <p>CSV Format: applicationID, studentID, internshipID, status, withdrawalStatus, confirmed</p>
+     *
+     * @param internships list of internships containing applications to save
      */
     public static void saveApplications(List<Internship> internships) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(APPLICATIONS_FILE))) {
@@ -144,7 +174,10 @@ public class FileIOHandler {
     }
 
     /**
-     * Load applications from CSV file and link them to internships and students
+     * Loads applications from the CSV file and links them to internships and students.
+     *
+     * @param internships list of internships to link applications to
+     * @param users map of users for resolving student IDs
      */
     public static void loadApplications(List<Internship> internships, HashMap<String, User> users) {
         File file = new File(APPLICATIONS_FILE);
@@ -197,8 +230,11 @@ public class FileIOHandler {
     // ==================== COMPANY REPRESENTATIVE PERSISTENCE ====================
 
     /**
-     * Save company representatives to CSV file
-     * Format: userID,name,email,password,companyName,position,department,status
+     * Saves company representatives to the CSV file.
+     *
+     * <p>CSV Format: userID, name, email, password, companyName, position, department, status</p>
+     *
+     * @param reps list of company representatives to save
      */
     public static void saveCompanyReps(List<CompanyRepresentative> reps) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(COMPANY_REPS_FILE))) {
@@ -222,7 +258,9 @@ public class FileIOHandler {
     }
 
     /**
-     * Load company representatives from CSV file
+     * Loads company representatives from the CSV file.
+     *
+     * @return list of loaded company representatives
      */
     public static List<CompanyRepresentative> loadCompanyReps() {
         List<CompanyRepresentative> reps = new ArrayList<>();
@@ -266,7 +304,12 @@ public class FileIOHandler {
     // ==================== UTILITY METHODS ====================
 
     /**
-     * Escape CSV special characters
+     * Escapes CSV special characters in a string.
+     * Wraps the value in quotes if it contains commas, quotes, or newlines.
+     * Doubles any existing quotes as per CSV standard.
+     *
+     * @param value the string to escape
+     * @return the escaped string
      */
     private static String escapeCSV(String value) {
         if (value == null)
@@ -278,7 +321,11 @@ public class FileIOHandler {
     }
 
     /**
-     * Unescape CSV special characters
+     * Unescapes CSV special characters from a string.
+     * Removes surrounding quotes and converts doubled quotes back to single quotes.
+     *
+     * @param value the string to unescape
+     * @return the unescaped string
      */
     private static String unescapeCSV(String value) {
         if (value == null)
@@ -290,7 +337,12 @@ public class FileIOHandler {
     }
 
     /**
-     * Save all data at once
+     * Saves all data (internships, applications, and company representatives) at once.
+     * This is a convenience method for batch saving operations.
+     *
+     * @param internships list of internships to save
+     * @param reps list of company representatives to save
+     * @param users map of all users
      */
     public static void saveAllData(List<Internship> internships,
             List<CompanyRepresentative> reps,
@@ -303,7 +355,11 @@ public class FileIOHandler {
     // ==================== PASSWORD HANDLING METHODS ====================
 
     /**
-     * Update password for a specific user in their respective CSV file
+     * Updates password for a specific user in their respective CSV file.
+     * Delegates to the appropriate password update method based on user type.
+     *
+     * @param user the user whose password should be updated
+     * @return true if the password was successfully updated, false otherwise
      */
     public static boolean updateUserPassword(User user) {
         if (user instanceof Student) {
@@ -317,28 +373,45 @@ public class FileIOHandler {
     }
 
     /**
-     * Update password for a student in the CSV file
+     * Updates password for a student in the student_list.csv file.
+     *
+     * @param student the student whose password should be updated
+     * @return true if successful, false otherwise
      */
     private static boolean updateStudentPassword(Student student) {
         return updatePasswordInFile("Datasets/student_list.csv", student.getUserID(), student.getPassword(), 0, 5);
     }
 
+    /**
+     * Updates password for a company representative in the company_reps.csv file.
+     *
+     * @param rep the company representative whose password should be updated
+     * @return true if successful, false otherwise
+     */
     private static boolean updateCompanyRepPassword(CompanyRepresentative rep) {
         return updatePasswordInFile("Datasets/company_reps.csv", rep.getUserID(), rep.getPassword(), 0, 3);
     }
 
+    /**
+     * Updates password for a staff member in the staff_list.csv file.
+     *
+     * @param staff the staff member whose password should be updated
+     * @return true if successful, false otherwise
+     */
     private static boolean updateStaffPassword(CareerCentreStaff staff) {
         return updatePasswordInFile("Datasets/staff_list.csv", staff.getUserID(), staff.getPassword(), 0, 5);
     }
 
     /**
-     * Generic method to update password in any CSV file
+     * Generic method to update password in any CSV file.
+     * Reads the entire file, updates the matching user's password, and writes back.
      *
-     * @param filePath            Path to the CSV file
-     * @param userID              ID of the user to update
-     * @param newPassword         New password to set
-     * @param idColumnIndex       Column index where userID is located (0-based)
-     * @param passwordColumnIndex Column index where password is located (0-based)
+     * @param filePath path to the CSV file
+     * @param userID ID of the user to update
+     * @param newPassword new password to set
+     * @param idColumnIndex column index where userID is located (0-based)
+     * @param passwordColumnIndex column index where password is located (0-based)
+     * @return true if successful, false otherwise
      */
     private static boolean updatePasswordInFile(String filePath, String userID, String newPassword,
             int idColumnIndex, int passwordColumnIndex) {
@@ -419,9 +492,10 @@ public class FileIOHandler {
     }
 
     /**
-     * Generic utility to migrate any user CSV file to include a default password
-     * column.
-     * This function contains the actual I/O and migration logic.
+     * Generic utility to migrate any user CSV file to include a default password column.
+     * Checks if the password column already exists and adds it with default value "password" if missing.
+     *
+     * @param filePath path to the CSV file to migrate
      */
     private static void migratePasswordColumn(String filePath) {
         try {
