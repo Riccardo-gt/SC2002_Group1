@@ -145,9 +145,7 @@ public class Student extends User {
         // Confirm acceptance
         application.confirmAcceptance();
 
-        // Decrease slot count for the internship
         Internship internship = application.getInternship();
-        internship.setSlots(internship.getSlots() - 1);
         System.out.println("You have accepted the placement for: " + internship.getTitle());
 
         // Withdraw all other applications
