@@ -158,6 +158,37 @@ public class CompanyRepMenu {
             if (!desc.isEmpty())
                 internship.setDescription(desc);
 
+            System.out.print("New Level (Basic/Intermediate/Advanced) (press Enter to keep '" + internship.getLevel() + "'): ");
+            String level = scanner.nextLine().trim();
+            if (!level.isEmpty()) {
+                if (level.equalsIgnoreCase("Basic") || level.equalsIgnoreCase("Intermediate") || level.equalsIgnoreCase("Advanced")) {
+                internship.setLevel(level);
+                } else {
+                    System.out.println("Invalid level. Must be Basic, Intermediate, or Advanced. Keeping current level.");
+                }
+            }
+            
+            System.out.print("New Preferred Major (press Enter to keep '" + internship.getPreferredMajor() + "'): ");
+            String major = scanner.nextLine().trim();
+            if (!major.isEmpty()) {
+                internship.setPreferredMajor(major);
+            }
+
+            System.out.print("New Number of Slots (press Enter to keep '" + internship.getSlots() + "'): ");
+            String slotsStr = scanner.nextLine().trim();
+            if (!slotsStr.isEmpty()) {
+                try {
+                    int slots = Integer.parseInt(slotsStr);
+                    if (slots > 0 && slots <= 10) {
+                        internship.setSlots(slots);
+                    } else {
+                        System.out.println("Slots must be between 1 and 10. Keeping current slots.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid number. Keeping current slots.");
+                }
+            }
+            
             System.out.println("\nInternship updated.");
 
         } catch (NumberFormatException e) {
