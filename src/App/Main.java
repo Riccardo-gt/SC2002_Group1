@@ -68,9 +68,9 @@ public class Main {
                     continue;
                 }
                 String[] parts = line.split(",");
-                // Format: UserID,Name,Major,Year,Email,Password
-                Student student = new Student(parts[0], parts[1], parts[4], parts[5], parts[2],
-                        Integer.valueOf(parts[3]));
+                // Format: UserID,Name,Major,Year,Email,Password, CGPA
+                Student student = new Student(parts[0], parts[1], parts[4], parts[5], parts[2], 
+                    Integer.valueOf(parts[3]), Float.valueOf(parts[6]));
                 registeredAccounts.put(parts[0], student);
             }
             file.close();
