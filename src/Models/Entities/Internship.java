@@ -168,8 +168,6 @@ public class Internship {
             // Update available slots based on confirmations
             this.slots = originalSlots - (int)confirmedCount;
             
-            System.out.println("DEBUG: confirmedCount=" + confirmedCount + ", originalSlots=" + originalSlots + ", availableSlots=" + slots);
-
             if (confirmedCount >= originalSlots && !"Filled".equals(status)) {
                 this.status = "Filled";
                 this.slots = 0; // Ensure it's 0
