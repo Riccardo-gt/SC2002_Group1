@@ -203,6 +203,8 @@ public class StaffMenu {
         System.out.println("1. Filter by Status");
         System.out.println("2. Filter by Level");
         System.out.println("3. Filter by Preferred Major");
+        System.out.println("4. Filter by Company");
+        System.out.println("5. Filter by Placement Status");
         System.out.print("Select filter: ");
 
         int choice;
@@ -243,6 +245,20 @@ public class StaffMenu {
                 System.out.println("Please enter the major");
                 filter = scanner.nextLine().trim().toLowerCase();
                 filterType = 3;
+                break;
+            case 4:
+                System.out.println("Please enter the company name");
+                filter = scanner.nextLine().trim();
+                filterType = 4;
+                break;
+            case 5:
+                System.out.println("Please enter 1 of the following (Filled / Not Filled)");
+                filter = scanner.nextLine().trim().toLowerCase();
+                if (!filter.equals("filled") && !filter.equals("not filled")) {
+                    System.out.println("Invalid placement status!");
+                    return;
+                }
+                filterType = 5;
                 break;
             default:
                 System.out.println("Invalid choice.");

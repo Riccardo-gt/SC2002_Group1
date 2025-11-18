@@ -92,6 +92,28 @@ public class CareerCentreStaff extends User {
                 }
                 System.out.println("Total Internships with preferred major = " + filter + " is " + filtered.size());
                 break;
+            case 4:
+                if (filter != null && !filter.isEmpty()) {
+                    filtered = allInternships.stream()
+                            .filter(i -> i.getCompanyRepresentative() != null &&
+                                    i.getCompanyRepresentative().getCompanyName().equalsIgnoreCase(filter))
+                            .collect(Collectors.toList());
+                }
+                System.out.println("Total Internships with company = " + filter + " is " + filtered.size());
+                break;
+            case 5:
+                boolean showFilled = filter != null && filter.equalsIgnoreCase("filled");
+                filtered = allInternships.stream()
+                        .filter(i -> {
+                            long confirmedCount = i.getApplications().stream()
+                                    .filter(app -> app.isConfirmed())
+                                    .count();
+                            return showFilled ? (confirmedCount >= i.getSlots()) : (confirmedCount < i.getSlots());
+                        })
+                        .collect(Collectors.toList());
+                System.out.println("Total Internships with placement status = " +
+                        (showFilled ? "Filled" : "Not Filled") + " is " + filtered.size());
+                break;
         }
     }
 
