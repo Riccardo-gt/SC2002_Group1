@@ -95,19 +95,28 @@ public class CompanyRepMenu {
     }
 
     public void viewMyInternships(CompanyRepresentative rep) {
-        List<Internship> myInternships = rep.getCreatedInternships();
+    List<Internship> myInternships = rep.getCreatedInternships();
 
-        if (myInternships.isEmpty()) {
-            System.out.println("\nYou have not created any internships yet.");
-            return;
-        }
-
-        for (int i = 0; i < myInternships.size(); i++) {
-            Internship internship = myInternships.get(i);
-            System.out.println("\nInternship No " + (i + 1));
-            internship.displayDetails();
-        }
+    if (myInternships.isEmpty()) {
+        System.out.println("\nYou have not created any internships yet.");
+        return;
     }
+
+    // Ask if they want to filter
+    System.out.println("\nYou have " + myInternships.size() + " internships.");
+    System.out.print("Filter by status? (y/n): ");
+    String choice = scanner.nextLine().trim().toLowerCase();
+    
+    List<Internship> displayList = myInternships;
+    if (choice.equals("y") || choice.equals("yes")) {
+        System.out.print("Enter status (Pending/Approved/Rejected/Filled): ");
+        String status = scanner.nextLine().trim();
+        displayList = rep.filterInternships(myInternships, "status", status);
+    }
+
+    // Use the inherited display method from User class
+    rep.displayInternships(displayList, "Your Internships");
+}
 
     public void editInternship(CompanyRepresentative rep) {
         List<Internship> myInternships = rep.getCreatedInternships();
