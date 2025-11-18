@@ -16,25 +16,31 @@ public class Internship {
     private CompanyRepresentative representative;
     private int slots;
     private List<Application> applications;
+    private int originalSlots;
 
     public Internship() {
         this.applications = new ArrayList<>();
         this.isVisible = true;
         this.status = "Pending";
         this.slots = 1;
+        this.originalSlots = 1;
     }
 
     public Internship(String title, String description, String level, 
                      String preferredMajor, LocalDate openingDate, 
                      LocalDate closingDate, int slots, CompanyRepresentative representative) {
-        this();
+        this.applications = new ArrayList<>();
+        this.isVisible = true;
+        this.status = "Pending";
+        this.slots = slots;
+        this.originalSlots = slots;
+        
         this.title = title;
         this.description = description;
         this.level = level;
         this.preferredMajor = preferredMajor;
         this.openingDate = openingDate;
         this.closingDate = closingDate;
-        this.slots = slots;
         this.representative = representative;
     }
 
@@ -118,7 +124,6 @@ public class Internship {
 
     public void setSlots(int slots) {
         this.slots = slots;
-        checkFilledStatus();
     }
 
     
@@ -155,16 +160,23 @@ public class Internship {
     }
 
     public void checkFilledStatus() {
-        if (slots > 0) {
+        if (originalSlots > 0) {
             long confirmedCount = applications.stream()
                 .filter(app -> app.isConfirmed())
                 .count();
 
-            if (confirmedCount >= slots && !"Filled".equals(status)) {
+            // Update available slots based on confirmations
+            this.slots = originalSlots - (int)confirmedCount;
+            
+            System.out.println("DEBUG: confirmedCount=" + confirmedCount + ", originalSlots=" + originalSlots + ", availableSlots=" + slots);
+
+            if (confirmedCount >= originalSlots && !"Filled".equals(status)) {
                 this.status = "Filled";
+                this.slots = 0; // Ensure it's 0
                 System.out.println("Internship '" + title + "' is now filled.");
-            } else if (confirmedCount < slots && "Filled".equals(status)) {
+            } else if (confirmedCount < originalSlots && "Filled".equals(status)) {
                 this.status = "Approved";
+                this.slots = originalSlots - (int)confirmedCount;
             }
         }
     }
