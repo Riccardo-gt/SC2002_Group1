@@ -66,55 +66,27 @@ public class CareerCentreStaff extends User {
     
 public void generateReport(List<Internship> allInternships, String filter, int filterType) {
     System.out.println("=== Career Centre Report ===");
-    List<Internship> filtered = allInternships;
-    
+    String filterTypeStr = "";
     switch (filterType) {
-        case 1: // Filter by Status
-            if (filter != null && !filter.isEmpty()) {
-                filtered = allInternships.stream()
-                        .filter(i -> i.getStatus().equalsIgnoreCase(filter))
-                        .collect(Collectors.toList());
-            }
-            System.out.println("Total Internships with status = " + filter + " is " + filtered.size());
+        case 1:
+            filterTypeStr = "status";
             break;
-        case 2: // Filter by Level
-            if (filter != null && !filter.isEmpty()) {
-                filtered = allInternships.stream()
-                        .filter(i -> i.getLevel().equalsIgnoreCase(filter))
-                        .collect(Collectors.toList());
-            }
-            System.out.println("Total Internships with level = " + filter + " is " + filtered.size());
+        case 2:
+            filterTypeStr = "level";
             break;
-        case 3: // Filter by Preferred Major
-            if (filter != null && !filter.isEmpty()) {
-                filtered = allInternships.stream()
-                        .filter(i -> i.getPreferredMajor().equalsIgnoreCase(filter))
-                        .collect(Collectors.toList());
-            }
-            System.out.println("Total Internships with preferred major = " + filter + " is " + filtered.size());
+        case 3:
+            filterTypeStr = "major";
             break;
+        default:
+            System.out.println("Invalid filter type.");
+            return;
     }
     
+    // Use the inherited filter method from User class
+    List<Internship> filtered = filterInternships(allInternships, filterTypeStr, filter);
     
-    if (filtered.isEmpty()) {
-        System.out.println("No internships match the selected filter.");
-    } else {
-        System.out.println("\n=== Matching Internships ===");
-        for (int i = 0; i < filtered.size(); i++) {
-            Internship internship = filtered.get(i);
-            System.out.println("\n[" + (i + 1) + "] " + internship.getTitle());
-            System.out.println("    Company: " + (internship.getCompanyRepresentative() != null 
-                    ? internship.getCompanyRepresentative().getCompanyName() 
-                    : "N/A"));
-            System.out.println("    Level: " + internship.getLevel());
-            System.out.println("    Preferred Major: " + internship.getPreferredMajor());
-            System.out.println("    Status: " + internship.getStatus());
-            System.out.println("    Visible: " + (internship.isVisible() ? "Yes" : "No"));
-            System.out.println("    Period: " + internship.getOpeningDate() + " to " + internship.getClosingDate());
-            System.out.println("    Slots: " + internship.getSlots());
-            System.out.println("    Applications: " + internship.getApplications().size());
-        }
-    }
+    // Use the inherited display method
+    displayInternships(filtered, "Internships with " + filterTypeStr + " = '" + filter + "'");
 }
 
 }
