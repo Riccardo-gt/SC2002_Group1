@@ -91,7 +91,7 @@ public class CompanyRepresentative extends User {
             System.out.println("You do not manage this internship.");
             return false;
         }
-        if ("APPROVED".equals(internship.getStatus())) {
+        if ("Approved".equals(internship.getStatus())) {
             System.out.println("Cannot delete approved internships.");
             return false;
         }
@@ -105,7 +105,7 @@ public class CompanyRepresentative extends User {
             System.out.println("You do not manage this internship.");
             return false;
         }
-        if ("APPROVED".equals(internship.getStatus())) {
+        if ("Approved".equals(internship.getStatus())) {
             System.out.println("Cannot edit approved internships.");
             return false;
         }
