@@ -6,7 +6,7 @@ Datasets/internships.csv
 .idea/
 
 # Compiled class files
-out.*
+out/
 
 # Log file
 *.log
