@@ -85,11 +85,6 @@ public class ApplicationViewer {
         // Higher GPA = better score
         score += (int) (s.getCGPA() * 10);
 
-        // Match preferred major
-        if (s.getMajor().equalsIgnoreCase(currentInternship.getPreferredMajor())) {
-            score += 20;
-        }
-
         // Higher study year = more experience
         score += s.getYearOfStudy() * 5;
 
