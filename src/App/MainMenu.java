@@ -78,6 +78,11 @@ public class MainMenu {
         System.out.print("Email (will be your User ID): ");
         String email = scanner.nextLine().trim();
 
+        if (!email.contains("@")) {
+            System.out.println("Invalid email format.");
+            return;
+        }
+
         if (registeredAccounts.containsKey(email)) {
             System.out.println("Error: This email is already registered.");
             return;

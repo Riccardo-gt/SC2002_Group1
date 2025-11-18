@@ -59,20 +59,6 @@ public class CompanyRepresentative extends User {
         return "APPROVED".equals(status);
     }
 
-    public CompanyRepresentative registerCompanyRep(String userId, String name, String email, String password, String companyName, String department, String position) {
-        // input validation
-        if (email.isEmpty() || companyName.isEmpty() || department.isEmpty() || position.isEmpty()) {
-            System.out.println("Please fill in all fields.");
-            return null;
-        }
-        if (!email.contains("@")) {
-            System.out.println("Invalid email format.");
-            return null;
-        }
-
-        return new CompanyRepresentative(userId, name, email, password, companyName, position, department, "PENDING");
-    }
-
     public void loadInternships(Internship internship) {
         createdInternships.add(internship);
     }
